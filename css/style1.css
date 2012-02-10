@@ -1,0 +1,178 @@
+@charset "utf-8";
+/* CSS Document */
+
+html {
+	padding:0;
+	margin:0;
+}
+
+body {
+	background-repeat: no-repeat;
+	padding: 0;
+	font-family: Verdana, Geneva, sans-serif;
+	color:#FFF;
+	font-size: 14px;
+	background-color: #656A72;
+	margin: 0;
+}
+form input {
+	font-family:"Courier New", Courier, monospace;
+	font-weight: bold;
+	background: #CDCFD2;
+}
+
+
+form .shortbox {
+	width: 60px;
+}
+form .medbox {
+	width: 70px;
+}
+.smalltxt {
+	font-size: 9px;
+	color: #B4B7BB;
+}
+
+#MainContainer {
+	height: 550px;
+	width: 820px;
+	background:url(../img/p2pool2.png);
+	background-repeat:no-repeat;
+	margin-top: 10px;
+}
+#LocalGraphSelector div img {
+	cursor: pointer;
+}
+#PoolGraphSelector div img {
+	cursor: pointer;
+}
+
+
+#apDiv0 {
+	background-repeat:no-repeat;
+	position:relative;
+	width:820px;
+	height:550px;
+	padding: 0;
+	margin: 0;
+	z-index: 10;
+	display: none;
+}
+#apDiv0 #userInput {
+	position: absolute;
+	height: 100px;
+	width: 300px;
+	left: 50%;
+	top: 50%;
+	text-align: center;
+	margin-left: -150px;
+	margin-top: -65px;
+	font-size: 12px;
+	/*border: 5px dotted #f44;*/
+}
+#apDiv0 #userInput form input {
+	margin-bottom:5px;
+	text-align:center;
+	color:#722;
+	margin-top: 5px;
+}
+
+#apDiv1 {
+	position: relative;
+	height: 550px;
+	width: 820px;
+	display: none;
+}
+#apDiv1 #tools {
+	position: absolute;
+	right: 20px;
+	top: 45px;
+	text-align: right;
+	width: 140px;
+	font-size: 9px;
+	word-wrap:break-word;
+}
+
+
+
+#apDiv1 #heads {
+	margin: 10px 10px 0 10px;
+	font-size: 16px;
+	width: 390px;
+	text-align: right;
+	float: left;
+	font-weight: bold;
+}
+
+#apDiv1 #tails {
+	margin: 10px 10px 0 10px;
+	font-size: 16px;
+	width: 390px;
+	float: left;
+	font-weight: bold;
+}
+#apDiv1 #MainGraph {
+	position: absolute;
+	left: 50%;
+	top: 290px;
+	margin-left: -240px;
+	width: 481px;
+}
+#apDiv1 #MainGraph #LocalGraphSelector{
+	width: 100px;
+	height: 163px;
+	position:absolute;
+	left: -110px;
+	top: 0px;
+	text-align: center;
+	font-weight: bold;
+}
+#apDiv1 #MainGraph #PoolGraphSelector {
+	width: 100px;
+	height: 163px;
+	position:absolute;
+	right: -110px;
+	top: 0px;
+	text-align: center;
+	font-weight: bold;
+}
+
+
+
+#apDiv1 #Console {
+	position:absolute;
+	bottom: 15px;
+	left: 15px;
+}
+#apDiv1 #Console .console {
+	width: 580px;
+	font-size: 10px;
+	height: 60px;
+	font-family: "Courier New", Courier, monospace;
+	background: #383F49;
+	color: #CCC;
+	border: 0;
+}
+
+.statline {
+	margin-bottom: 10px;
+}
+
+.inline {
+	display: inline;
+}
+
+.leftstat {
+	width: 390px;
+	margin: 10px;
+	float: left;
+	text-align:right;
+}
+.rightstat {
+	width: 390px;
+	margin: 10px;
+	float:left;
+}
+.righttxt {
+	text-align: right;
+}
