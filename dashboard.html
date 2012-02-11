@@ -6,48 +6,74 @@
 <link href="css/style1.css" rel="stylesheet" type="text/css" />
 <script src="js/cookies.js" type="text/javascript"></script>
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+
+<!--<script type="text/javascript" src="js/jquery.min.js"></script>
+-->
 <script type="text/javascript">
 
+var funcTimedOut = 2000;
+var timeOutTimer;
 
-var localIP = "127.0.0.1:9332";
-var localWallet = "";
+var htxt="http://";
+var localIP = "";
+var onLoginScreen = true;
+
 function pageLoaded(){
-	
 	var li = getCookie('LocalIP');
-	var lw = getCookie('LocalWallet');
+	localIP = li;
 	if(li==""){
 		document.getElementById('apDiv0').style.display = "block";
 	} else {
+		onLoginScreen = false;
+		timeOutTimer=setTimeout("alertMe()",funcTimedOut);
 		localIP = li;
 		document.getElementById('apDiv1').style.display = "block";
 		document.getElementById("dispIP").innerHTML = li;
+		loadGraphImages();
+		getJSONdata();
 	}
-	if(lw!=""){
-		document.getElementById("dispWal").innerHTML = lw;
-		document.getElementById('WALLIN').value = lw;
-	}
-	loadGraphImages();
 	var nwd = window.innerWidth;
 	var ndp = parseInt((nwd - 820) / 2)+"px";
 	document.getElementById('MainContainer').style.marginLeft = ndp;
+}
+
+function alertMe(){
+	window.stop();
+	var answer = confirm('Couldn\'t connect to specified address: '+localIP+'\ntimeout='+funcTimedOut+'\n\nWould you like to try another ip?');
+	if (answer) remIP()
 }
 
 function checkInput(form){
 	//alert(form.p2poolip.value);
 	localIP = document.getElementById('IPIN').value;
 	document.getElementById('IPIN').value = "";
-	localWallet = document.getElementById('WALLIN').value;
 	setCookie('LocalIP', localIP);
-	if (localWallet!=""){
-		setCookie('LocalWallet', localWallet);
-	}
 	document.getElementById('apDiv1').style.display = "block";
 	document.getElementById('apDiv0').style.display = "none";
 	document.getElementById("dispIP").innerHTML = localIP;
-	document.getElementById("dispWal").innerHTML = localWallet;
+	timeOutTimer=setTimeout("alertMe()",funcTimedOut);
 	loadGraphImages();
+	getJSONdata();
 }
-var htxt="http://";
+
+//keyHandler
+function keyHandler(e){
+	var charCode;
+	if(e && e.which){
+		charCode = e.which;
+	}else if(window.event){
+		e = window.event;
+		charCode = e.keyCode;
+	}
+	if (onLoginScreen){
+		if(charCode == 13) {
+			checkInput(document.form0);
+		}
+	}
+	
+}
+
+//graphs
 var graphsarr=new Array(
 	0,
 	'/graphs/localrate_day',
@@ -59,53 +85,42 @@ var graphsarr=new Array(
 );
 
 function selectGraph(graphNum){
-	if (graphNum==1){
-		document.bigGraph.src = htxt+localIP+graphsarr[1];
-		setCookie('FavGraph',1);
-	}
-	else if(graphNum==2){
-		document.bigGraph.src = htxt+localIP+graphsarr[2];
-		setCookie('FavGraph',2);
-	}
-	else if(graphNum==3){
-		document.bigGraph.src = htxt+localIP+graphsarr[3];
-		setCookie('FavGraph',3);
-	}
-	else if(graphNum==4){
-		document.bigGraph.src = htxt+localIP+graphsarr[4];
-		setCookie('FavGraph',4);
-	}
-	else if(graphNum==5){
-		document.bigGraph.src = htxt+localIP+graphsarr[5];
-		setCookie('FavGraph',5);
-	}
-	else if(graphNum==6){
-		document.bigGraph.src = htxt+localIP+graphsarr[6];
-		setCookie('FavGraph',6);
+	for (var i=1;i<7;i++){
+		if (graphNum==i){
+			document.bigGraph.src = htxt+localIP+graphsarr[i];
+			setCookie('FavGraph',i);
+		}
 	}
 }
 function remIP(){
 	clearCookie('LocalIP');
 	history.go(0);
 }
-function remWal(){
-	clearCookie('LocalWallet');
-	history.go(0);
-}
 function loadGraphImages(){
+
 	var fg = getCookie('FavGraph');
 	if (fg>0||fg<7){
 		document.bigGraph.src = htxt+localIP+graphsarr[1];
 	}else{
 		document.bigGraph.src = htxt+localIP+graphsarr[fg];
 	}
-	document.graph1.src = htxt+localIP+graphsarr[1];
-	document.graph2.src = htxt+localIP+graphsarr[2];
-	document.graph3.src = htxt+localIP+graphsarr[3];
-	document.graph4.src = htxt+localIP+graphsarr[4];
-	document.graph5.src = htxt+localIP+graphsarr[5];
-	document.graph6.src = htxt+localIP+graphsarr[6];
+	
+	for (var i=1;i<7;i++){
+		document.getElementById('graph'+i).src = htxt+localIP+graphsarr[i];
+	}
 }
+
+
+function noShnickShnack() {
+	var NewWinHeight=650;
+	var NewWinWidth=830;
+	var NewWinPutX=10;
+	var NewWinPutY=10;
+	TheNewWin =window.open("dashboard.html",'p2pool dashboard','fullscreen=no,toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=no,resizable=no');
+	TheNewWin.resizeTo(NewWinWidth,NewWinHeight);
+	//TheNewWin.moveTo(NewWinPutX,NewWinPutY);
+}
+
 
 window.onresize = function(event){
 	var nwd = window.innerWidth;
@@ -113,50 +128,104 @@ window.onresize = function(event){
 	document.getElementById('MainContainer').style.marginLeft = ndp;
 }
 
-function noShnickShnack() {
+document.onkeypress=keyHandler;
 
-// Set height and width
-var NewWinHeight=650;
-var NewWinWidth=830;
+   /////////////////////////////////////////////////////////////////////////////
+  //////////////                                                 //////////////
+ //////////////                    GET JSON                     //////////////
+/////////////////////////////////////////////////////////////////////////////
 
-// Place the window
-var NewWinPutX=10;
-var NewWinPutY=10;
-
-TheNewWin =window.open("dashboard.html",'p2pool dashboard','fullscreen=no,toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=no,resizable=no');
-
-TheNewWin.resizeTo(NewWinWidth,NewWinHeight);
-//TheNewWin.moveTo(NewWinPutX,NewWinPutY);
-
+function roundNumber(num, dec) {
+	var result = Math.round(num*Math.pow(10,dec))/Math.pow(10,dec);
+	return result;
 }
+//var t=setTimeout("getJSONdata()",3000);
 
+function getJSONdata(){
+	var lsurl = htxt+localIP+'/local_stats';
+	var gsurl = htxt+localIP+'/global_stats';
+	/*
+	$(document).ajaxError(function(event, request, settings, err) {
+		alert("error: " + settings.url + ": " + err.message);
+	});
+	*/
+	$.getJSON(htxt+localIP+'/payout_addr',function(addr) {
+		$('#dispWal').html("Payout to: "+addr.replace("Address. Address:",""));
+		$.getJSON(htxt+localIP+'/current_payouts', function(pays){
+			document.form1.lcpo.value=roundNumber(pays[addr],4);
+		});
+	});
+	/*$.get(servaddr + '/rate', function(data) {
+		$('#hashrate').html(data / 1000000000);
+	});*/
+
+//////////////////////////////////////////////////////////////////////////////
+//local_stats
+//////////////////////////////////////////////////////////////////////////////
+/*
+miner_hash_rates
+my_stale_proportions_in_last_hour
+my_hash_rates_in_last_hour
+miner_dead_hash_rates
+my_share_counts_in_last_hour
+*/
+	
+	$.getJSON(lsurl, function(k) {
+//		document.form1.lcspd.value = roundNumber(k.pool_nonstale_hash_rate/1000000000, 2);
+		var localspeed = 0;
+		for(var i in k.miner_hash_rates) {
+			localspeed = localspeed + k.miner_hash_rates[i];
+//			document.write("<b>key[''"+i+"'] is </b>=> "+k.miner_hash_rates[i]+"<br>");
+		}
+		document.form1.lcspd.value = Math.round(localspeed/1000000);
+		
+		
+		for(var i in k.my_share_counts_in_last_hour) {
+			//localspeed = localspeed + k.my_share_counts_in_last_hour[i];
+//			document.write("<b>key[\'"+i+"\'] is </b>=> "+k.my_share_counts_in_last_hour[i]+"<br>");
+		}
+		
+		document.form1.lcsh.value = k.my_share_counts_in_last_hour.unstale_shares+"/"+k.my_share_counts_in_last_hour.shares;
+	});
+	
+//////////////////////////////////////////////////////////////////////////////
+//global_stats
+//////////////////////////////////////////////////////////////////////////////
+/*
+pool_nonstale_hash_rate
+pool_stale_prop
+pool_hash_rate
+*/
+	
+	$.getJSON(gsurl, function(k) {
+//		alert(roundNumber(k.pool_hash_rate/1000000000, 2));
+		document.form2.plspd.value = roundNumber(k.pool_hash_rate/1000000000, 2);
+		var arr = new Array;
+		
+		//get keynames		
+		for(var i in k) {
+			arr.push(i);
+		}
+		clearTimeout(timeOutTimer);
+	});
+}
 </script>
 </head>
 <body>
-<script type="text/javascript">
-var arr = new Array($.getJSON(htxt+localIP + '/local_stats'));
-document.write(arr[0][0][0]);
-/*
-for(var i=0;i<arr.length;i++){
-	document.write("<b>arr["+i+"] is </b>=>"+arr[i]+"<br>");
-}
-*/
-</script>
+<div id="Temp" style="position: absolute; left: 0; top: 0; font-size:32px;">
+</div>
 <div id="MainContainer">
-	<noscript>
-    	<br />
-        <br />
-        <br />
-    	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; The page requires javascript.
-    </noscript>
+  <noscript>
+  <br />
+  <br />
+  <br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; The page requires javascript.
+  </noscript>
   <div id="apDiv0">
     <div id="userInput">
-      <form method="get" name="form0" id="formZero">
+      <form action="javascript: void(0)" name="form0" id="formZero">
         <div>your p2pool ip address:port<div class="smalltxt">ex: 127.0.0.1:9332</div>
           <input name="p2poolip" id="IPIN" type="text" size="24" maxlength="22" value="" />
-        </div>
-        <div>your p2pool payout account(optional)
-          <input name="userwallet" id="WALLIN" type="text" size="35" maxlength="35" value="" />
         </div>
         <div>
           <input name="userin" type="button" value="done" onclick="checkInput(this.form);"/>
@@ -170,8 +239,6 @@ for(var i=0;i<arr.length;i++){
       <div id="dispIP"></div>
       <a href="javascript: void(0);" onclick="remIP();">reset IP</a>
       <br />
-      <div id="dispWal"></div>
-      <a href="javascript: void(0);" onclick="remWal();">clear Wallet</a>
       <br />
       <a href="javascript: void(0);" onclick="noShnickShnack();">no menu/toolbars</a>
       <br />
@@ -182,48 +249,48 @@ for(var i=0;i<arr.length;i++){
       <a href="http://forum.bitcoin.org/index.php?topic=18313" target="_new">forum</a>
       <br />
       <a href="https://github.com/forrestv/p2pool" target="_new">github</a>
-      
     </div>
     <div id="heads">Local</div>
     <div id="tails">Pool</div>
+    <div id="dispWal" class="smalltxt"></div>
     <div class="leftstat">
-      <form action="index.html" method="get" name="form1">
+      <form action="#" name="form1">
         <div class="statline"> est. local speed(<div id="localspeedprefix" class="inline">M</div>H/s)
-          <input name="lcspd" type="text" class="shortbox" value="365" readonly />
+          <input name="lcspd" type="text" class="shortbox" value="-" readonly />
         </div>
         <div class="statline">payout
-          <input name="lcpayout" type="text" class="shortbox" value="0.1035" readonly />
+          <input name="lcpo" type="text" class="shortbox" value="-" readonly />
         </div>
         <div class="statline">shares
-          <input name="lcshares" type="text" class="shortbox" value="25" readonly />
+          <input name="lcsh" type="text" class="shortbox" value="-" readonly />
         </div>
         <div class="statline">time to share(mins)
-          <input name="lcsharetime" type="text" class="shortbox" value="45" readonly />
+          <input name="lcsht" type="text" class="shortbox" value="-" readonly />
         </div>
         <div class="statline">peers
-          <input name="lcpeers" type="text" class="shortbox" value="10(10)" readonly />
+          <input name="lcp" type="text" class="shortbox" value="--(--)" readonly />
         </div>
         <div class="statline">efficiency
-          <input name="lceff" type="text" class="shortbox" value="199%" readonly />
+          <input name="lcef" type="text" class="shortbox" value="---%" readonly />
         </div>
         <div class="statline">doa(%)
-          <input name="lcdoa" type="text" class="shortbox" value="2.3" readonly />
+          <input name="lcdoa" type="text" class="shortbox" value="--" readonly />
         </div>
       </form>
     </div>
     <div class="rightstat">
-      <form action="index.html" method="get" name="form2">
+      <form action="#" name="form2">
         <div class="statline">
-          <input name="plspd" type="text" class="medbox righttxt" value="220" readonly />
+          <input name="plspd" type="text" class="medbox righttxt" value="---.--" readonly />
           pool speed (<div id="poolspeedprefix" class="inline">G</div>H/s) </div>
         <div class="statline">
-          <input name="lcdoa" type="text" class="medbox righttxt" value="50.0812" readonly />
+          <input name="plpo" type="text" class="medbox righttxt" value="--.----" readonly />
           block payout</div>
         <div class="statline">
-          <input name="lcdoa" type="text" class="medbox righttxt" value="0.9995" readonly />
+          <input name="plsd" type="text" class="medbox righttxt" value="-.----" readonly />
           share difficulty</div>
         <div class="statline">
-          <input name="lcdoa" type="text" class="medbox righttxt" value="365" readonly />
+          <input name="plsr" type="text" class="medbox righttxt" value="----" readonly />
           stale rate </div>
       </form>
     </div>
@@ -231,36 +298,28 @@ for(var i=0;i<arr.length;i++){
       <div id="LocalGraphSelector">
         <div>LOCAL</div>
         <div>
-          <img src="" width="100" height="33" name="graph1" longdesc="Local Rate (Day)" onclick="selectGraph(1);" />
+          <img src="" width="100" height="33" id="graph1" longdesc="Local Rate (Day)" onclick="selectGraph(1);" />
         </div>
         <br />
         <div>
-          <img src="" width="100" height="33" name="graph2" longdesc="Local Rate (Week)" onclick="selectGraph(2);" />
+          <img src="" width="100" height="33" id="graph2" longdesc="Local Rate (Week)" onclick="selectGraph(2);" />
         </div>
         <br />
         <div>
-          <img src="" width="100" height="33" name="graph3" longdesc="Local Rate (Month)" onclick="selectGraph(3);" /></div></div>
+          <img src="" width="100" height="33" id="graph3" longdesc="Local Rate (Month)" onclick="selectGraph(3);" /></div></div>
       <img src="" width="481" height="163" name="bigGraph"/>
       <div id="PoolGraphSelector">
         <div>POOL</div>
-        <div><img src="" width="100" height="33" name="graph4" longdesc="Pool Rate (Day)" onclick="selectGraph(4);" /></div>
+        <div><img src="" width="100" height="33" id="graph4" longdesc="Pool Rate (Day)" onclick="selectGraph(4);" /></div>
         <br />
-        <div><img src="" width="100" height="33" name="graph5" longdesc="Pool Rate (Week)" onclick="selectGraph(5);" /></div>
+        <div><img src="" width="100" height="33" id="graph5" longdesc="Pool Rate (Week)" onclick="selectGraph(5);" /></div>
         <br />
         <div>
-          <img src="" width="100" height="33" name="graph6" longdesc="Pool Rate (Month)" onclick="selectGraph(6);" /></div>
+          <img src="" width="100" height="33" id="graph6" longdesc="Pool Rate (Month)" onclick="selectGraph(6);" /></div>
       </div>
     </div>
     <div id="Console">
       <textarea name="thebox" class="console">
-01234567890123456789012345678901234567890123456789012345678901234567890123456789
-01234567890123456789012345678901234567890123456789012345678901234567890123456789
-01234567890123456789012345678901234567890123456789012345678901234567890123456789
-01234567890123456789012345678901234567890123456789012345678901234567890123456789
-01234567890123456789012345678901234567890123456789012345678901234567890123456789
-01234567890123456789012345678901234567890123456789012345678901234567890123456789
-01234567890123456789012345678901234567890123456789012345678901234567890123456789
-01234567890123456789012345678901234567890123456789012345678901234567890123456789
 01234567890123456789012345678901234567890123456789012345678901234567890123456789
 01234567890123456789012345678901234567890123456789012345678901234567890123456789
 </textarea>

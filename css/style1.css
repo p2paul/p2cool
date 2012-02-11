@@ -111,6 +111,12 @@ form .medbox {
 	float: left;
 	font-weight: bold;
 }
+#apDiv1 #dispWal {
+	position: absolute;
+	top: 15px;
+	right: 15px;
+}
+
 #apDiv1 #MainGraph {
 	position: absolute;
 	left: 50%;
