@@ -5,13 +5,16 @@
 <title>p2pool dashboard</title>
 <link href="css/style1.css" rel="stylesheet" type="text/css" />
 <script src="js/cookies.js" type="text/javascript"></script>
+
+<script type="text/javascript" src="js/canvas3DGraph.js"></script>  
+   
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
 
 <!--<script type="text/javascript" src="js/jquery.min.js"></script>
 -->
 <script type="text/javascript">
 
-var funcTimedOut = 2000;
+var funcTimedOut = 4000;
 var timeOutTimer;
 
 var htxt="http://";
@@ -29,8 +32,8 @@ function pageLoaded(){
 		localIP = li;
 		document.getElementById('apDiv1').style.display = "block";
 		document.getElementById("dispIP").innerHTML = li;
-		loadGraphImages();
 		getJSONdata();
+		loadGraphImages();
 	}
 	var nwd = window.innerWidth;
 	var ndp = parseInt((nwd - 820) / 2)+"px";
@@ -66,11 +69,10 @@ function keyHandler(e){
 		charCode = e.keyCode;
 	}
 	if (onLoginScreen){
-		if(charCode == 13) {
+		if(e.keyCode == 13 || e.keyCode == 39) { //enterkey or right arrow
 			checkInput(document.form0);
 		}
 	}
-	
 }
 
 //graphs
@@ -111,7 +113,7 @@ function loadGraphImages(){
 }
 
 
-function noShnickShnack() {
+function noClutter() {
 	var NewWinHeight=650;
 	var NewWinWidth=830;
 	var NewWinPutX=10;
@@ -139,26 +141,150 @@ function roundNumber(num, dec) {
 	var result = Math.round(num*Math.pow(10,dec))/Math.pow(10,dec);
 	return result;
 }
-//var t=setTimeout("getJSONdata()",3000);
+function getHigh(arr,deep){
+	var hi=0;
 
+	for(var i=0;i<deep;i++){
+		if(arr[i]>hi){
+			hi = arr[i];
+		}
+	}
+	return hi;
+}
+function getLow(arr,deep){
+	var lo=arr[0];
+	for(var i=0;i<deep;i++){
+		if(arr[i]<lo){
+			lo=arr[i];
+		}
+	}
+	return lo;
+}
+function printArray(a){
+	document.write("<table width=\"100\" border=\"1\">");
+	for (var i=0; i<a.length; i++) {
+		document.write("<tr><td>" +i+ "</td><td>" +a[i]+ "</td></tr>");
+	}
+	document.write("<t/able>");
+	document.close();
+}
+function compArray(a,fac){
+	var b = new Array();
+	nLen = parseInt(a.length/fac);
+	for(i=0;i<=nLen;i++){
+		b[i]=a[i*fac];
+	}
+	return b;
+}
+
+//var rf=setTimeout("getJSONdata()",2000);
 function getJSONdata(){
 	var lsurl = htxt+localIP+'/local_stats';
 	var gsurl = htxt+localIP+'/global_stats';
-	/*
-	$(document).ajaxError(function(event, request, settings, err) {
-		alert("error: " + settings.url + ": " + err.message);
-	});
-	*/
-	$.getJSON(htxt+localIP+'/payout_addr',function(addr) {
-		$('#dispWal').html("Payout to: "+addr.replace("Address. Address:",""));
-		$.getJSON(htxt+localIP+'/current_payouts', function(pays){
-			document.form1.lcpo.value=roundNumber(pays[addr],4);
-		});
-	});
-	/*$.get(servaddr + '/rate', function(data) {
-		$('#hashrate').html(data / 1000000000);
-	});*/
+	var paurl = htxt+localIP+'/payout_addr';
+	var cpurl = htxt+localIP+'/current_payouts';
+	var wlurl = htxt+localIP+'/web/log';
+	var uturl = htxt+localIP+'/uptime';
+	/*$(document).ajaxError(function(event, request, settings, err) {alert("error: " + settings.url + ": " + err.message);});*/
+	/*$.get(servaddr + '/rate', function(data) {$('#hashrate').html(data / 1000000000);});*/
+	$.get(uturl,function(uptime) {
+		uptime = parseInt(uptime);
 
+		var d=Math.floor(uptime/216000);
+		var h=Math.floor(uptime/3600);
+		var m=Math.floor((uptime%3600)/60);
+		var s=Math.ceil(uptime%60);
+		
+		$('#upTime').html('uptime: '+d+'d '+h+'h '+m+'m '+s+'s ');
+	});
+	
+	
+	$.ajax({
+		url:paurl,
+		dataType:'json',
+		success: function(d){
+			$('#dispWal').html("Payout to: "+d.replace("Address. Address:",""));
+			$.getJSON(cpurl, function(pays){
+				document.form1.lcpo.value=roundNumber(pays[d],4);
+			});
+		}
+	});
+	var ssarr = new Array(); //stale_shares
+		var mnarr = new Array(); //local_hash_rates  key  (miner name)
+		var mrarr = new Array(); //local_hash_rates value (miner data)
+	var prarr = new Array(); //pool_hash_rate
+	var sharr = new Array(); //shares
+	var psarr = new Array(); //pool_stale_prop
+	var tmarr = new Array(); //time
+		var sdarr = new Array(); //stale_shares_breakdown.doa
+		var soarr = new Array(); //stale_shares_breakdown.orphan
+		var mdarr = new Array(); //local_dead_hash_rates (miner data)
+
+	var fastCall = $.ajax({
+		url: wlurl,
+		dataType: 'json',
+		success: function(d){
+			var ft1 = new Date().getTime();
+			var it=0; //main iterator
+			var it2=0;
+			var processor; // needs to be defined prior
+			processor = function(dataItem, idx) {
+				if (typeof dataItem === 'object') {
+					if (idx =="local_hash_rates"){
+						mnarr[it] = new Array();
+						mrarr[it] = new Array();
+						$.map(dataItem, function(r,n){
+							mnarr[it].push(n);
+							mrarr[it].push(parseInt(r));
+							//document.write("arr["+it+"]"+n+" => "+r+"<br>");
+						});
+					}
+					if (idx =="stale_shares_breakdown"){
+						sdarr[it] = new Array(); //doa
+						soarr[it] = new Array(); //orphan
+						$.map(dataItem, function(d,i){
+							if (i=="doa"){
+								sdarr[it].push(d)
+							}else if(i=="orphan"){
+								soarr[it].push(d)
+							}
+							//document.write("arr["+it+"]"+i+" => "+d+"<br>");
+							it2++;
+						});
+						//document.write(soarr[it][0]+"<br>&nbsp;&nbsp;&nbsp;"+soarr[it][1]+"<br>");
+					}
+					if (idx =="local_dead_hash_rates"){
+						mnarr[it] = new Array();
+						mdarr[it] = new Array();
+						$.map(dataItem, function(d,n){
+							mnarr[it].push(n);
+							mdarr[it].push(d);
+							//document.write("arr["+it+"]"+n+" => "+d+"<br>");
+						});
+					}
+					return $.map(dataItem,processor);
+	        	} else {
+					if (idx=="stale_shares")	{ ssarr[it] = dataItem }
+					if (idx=="pool_hash_rate")	{ prarr[it] = parseInt(dataItem) }
+					if (idx=="shares")			{ sharr[it] = dataItem }
+					if (idx=="pool_stale_prop")	{ psarr[it] = dataItem }
+					if (idx=="time")			{ tmarr[it] = parseInt(dataItem) }
+            		return;
+        		}
+    		};
+
+			$.map(d, function(a,b){ processor(a,b); it++; });
+			var lai = d.length-1;
+			document.form1.lcsh.value = sharr[lai]+"/"+ssarr[lai];
+			document.form1.lcef.value = roundNumber((1-(ssarr[lai]/sharr[lai]))/(1-psarr[lai])*100, 2)+"%";
+			//printArray(sharr);
+			var ft2 = new Date().getTime();
+			$('#console').append("Processed "+d.length+" records in "+"~"+(ft2-ft1)+" ms");
+			//document.close();
+			load3D(tmarr,mrarr,sharr);
+		},
+		timeout: 2000
+	});
 //////////////////////////////////////////////////////////////////////////////
 //local_stats
 //////////////////////////////////////////////////////////////////////////////
@@ -169,25 +295,20 @@ my_hash_rates_in_last_hour
 miner_dead_hash_rates
 my_share_counts_in_last_hour
 */
-	
-	$.getJSON(lsurl, function(k) {
-//		document.form1.lcspd.value = roundNumber(k.pool_nonstale_hash_rate/1000000000, 2);
-		var localspeed = 0;
-		for(var i in k.miner_hash_rates) {
-			localspeed = localspeed + k.miner_hash_rates[i];
-//			document.write("<b>key[''"+i+"'] is </b>=> "+k.miner_hash_rates[i]+"<br>");
-		}
-		document.form1.lcspd.value = Math.round(localspeed/1000000);
-		
-		
-		for(var i in k.my_share_counts_in_last_hour) {
-			//localspeed = localspeed + k.my_share_counts_in_last_hour[i];
-//			document.write("<b>key[\'"+i+"\'] is </b>=> "+k.my_share_counts_in_last_hour[i]+"<br>");
-		}
-		
-		document.form1.lcsh.value = k.my_share_counts_in_last_hour.unstale_shares+"/"+k.my_share_counts_in_last_hour.shares;
+	$.ajax({
+		url: lsurl,
+		dataType: 'json',
+		success: function(k){
+			var localspeed = 0;
+			for(var i in k.miner_hash_rates) {
+				localspeed = localspeed + k.miner_hash_rates[i];
+			}
+			document.form1.lcspd.value = Math.round(localspeed/1000000);
+			//document.form1.lcsh.value = k.my_share_counts_in_last_hour.unstale_shares+"/"+k.my_share_counts_in_last_hour.shares;
+						
+		},
+		timeout: 500
 	});
-	
 //////////////////////////////////////////////////////////////////////////////
 //global_stats
 //////////////////////////////////////////////////////////////////////////////
@@ -196,24 +317,23 @@ pool_nonstale_hash_rate
 pool_stale_prop
 pool_hash_rate
 */
-	
-	$.getJSON(gsurl, function(k) {
-//		alert(roundNumber(k.pool_hash_rate/1000000000, 2));
-		document.form2.plspd.value = roundNumber(k.pool_hash_rate/1000000000, 2);
-		var arr = new Array;
-		
-		//get keynames		
-		for(var i in k) {
-			arr.push(i);
-		}
-		clearTimeout(timeOutTimer);
+	$.ajax({
+		url: gsurl,
+		dataType: 'json',
+		success: function(k){
+			document.form2.plspd.value = roundNumber(k.pool_hash_rate/1000000000, 2);
+			clearTimeout(timeOutTimer);
+		},
+		timeout: 1000
 	});
 }
 </script>
 </head>
 <body>
-<div id="Temp" style="position: absolute; left: 0; top: 0; font-size:32px;">
+
+<div id="Temp" style="position: absolute; left: 0; top: 0; font-size:12px;">
 </div>
+
 <div id="MainContainer">
   <noscript>
   <br />
@@ -221,6 +341,80 @@ pool_hash_rate
   <br />
   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; The page requires javascript.
   </noscript>
+  
+    <div id="g-holder">  
+        <div id="canvasDiv">  
+            <canvas id="agraph" width="300" height="300" ></canvas>  
+            <div id="gInfo"></div>   
+        </div>  
+        <div id="controls">  
+        <!-- (put your controls here, if you need any) -->  
+        </div>  
+    </div>
+    <script type="text/javascript">
+    
+    function load3D(xx,yy,zz){  
+              
+        //Initialise Graph  
+        var g = new canvasGraph('agraph');  
+        //define some data  
+        var gData=new Array();
+
+/*		
+        gData[0]={x:300,y:500,z:500};  
+        gData[1]={x:400,y:400,z:600};  
+        gData[2]={x:500,y:300,z:700};  
+        gData[3]={x:600,y:200,z:800};  
+        gData[4]={x:700,y:100,z:900};  
+		
+		compression factor --> use every nth array entry */
+		var fac = 20;
+		xx = compArray(xx,fac);
+		yy = compArray(yy,fac);
+		zz = compArray(zz,fac);
+		for (var q=0;q<yy.leng;q++){
+			$("#console").html(q+"\n"+yy[q]+"__");
+		}
+		//time speed share  x y z
+		var leng=zz.length;
+		var fi=leng;
+		
+		var xHi = getHigh(xx,fi);
+		var xLo = getLow(xx,fi);
+		var yHi = getHigh(yy,fi);
+		var yLo = getLow(yy,fi);
+		var zHi = getHigh(zz,fi);
+		var zLo = getLow(zz,fi);
+		//$("#Temp").append("<br>"+xHi+"<br>"+xLo+"<br>"+yHi+"<br>"+yLo+"<br>"+zHi+"<br>"+zLo);
+
+		function scale(data,low,high,tlow,thigh){
+			return((data-low)/(high-low)*thigh);
+		}
+		var tmp=leng-fi;
+		for(var i=tmp;i<leng;i=i+1){
+			gData[i-tmp]=new Array();
+			var _x = parseInt(scale(xx[i],xLo,xHi,0,1000));
+			var _y = parseInt((yy[i][0])/400000);
+			//var _y = 100;
+			//var _z = zz[i];
+			var _z = parseInt(scale(zz[i],0,zHi,0,1000));
+			//var _z = 1000;
+			gData[i-tmp]={x:_x, y:_y, z:_z};
+			//$("#Temp").append("<br>"+zz[i]+"<br>"+_x+"<br>"+_y+"<br>"+_z+"<br>");
+		}
+
+        //gData[1]={x:100,y:500,z:500};  
+        //gData[2]={x:100,y:900,z:900};  
+    
+        // sort data - draw farest elements first         
+        //gData.sort(sortNumByZ);  
+                  
+        //draw graph
+        g.drawGraph(gData);
+    
+    }
+    </script>
+
   <div id="apDiv0">
     <div id="userInput">
       <form action="javascript: void(0)" name="form0" id="formZero">
@@ -240,7 +434,7 @@ pool_hash_rate
       <a href="javascript: void(0);" onclick="remIP();">reset IP</a>
       <br />
       <br />
-      <a href="javascript: void(0);" onclick="noShnickShnack();">no menu/toolbars</a>
+      <a href="javascript: void(0);" onclick="noClutter();">no menu/toolbars</a>
       <br />
       <br />
       <div style="font-weight:bold; font-size:11px; margin-bottom:3px;">LINKS</div>
@@ -249,13 +443,15 @@ pool_hash_rate
       <a href="http://forum.bitcoin.org/index.php?topic=18313" target="_new">forum</a>
       <br />
       <a href="https://github.com/forrestv/p2pool" target="_new">github</a>
+      <br />
+      <a href="http://btcstats.net/p2pool" target="_new">pool hash rate</a>
     </div>
     <div id="heads">Local</div>
     <div id="tails">Pool</div>
     <div id="dispWal" class="smalltxt"></div>
     <div class="leftstat">
       <form action="#" name="form1">
-        <div class="statline"> est. local speed(<div id="localspeedprefix" class="inline">M</div>H/s)
+        <div class="statline">local(MH)
           <input name="lcspd" type="text" class="shortbox" value="-" readonly />
         </div>
         <div class="statline">payout
@@ -264,7 +460,7 @@ pool_hash_rate
         <div class="statline">shares
           <input name="lcsh" type="text" class="shortbox" value="-" readonly />
         </div>
-        <div class="statline">time to share(mins)
+        <div class="statline">~share time
           <input name="lcsht" type="text" class="shortbox" value="-" readonly />
         </div>
         <div class="statline">peers
@@ -294,6 +490,9 @@ pool_hash_rate
           stale rate </div>
       </form>
     </div>
+    
+    <div id="upTime" class="smalltxt"></div>
+    
     <div id="MainGraph">
       <div id="LocalGraphSelector">
         <div>LOCAL</div>
@@ -319,10 +518,7 @@ pool_hash_rate
       </div>
     </div>
     <div id="Console">
-      <textarea name="thebox" class="console">
-01234567890123456789012345678901234567890123456789012345678901234567890123456789
-01234567890123456789012345678901234567890123456789012345678901234567890123456789
-</textarea>
+      <textarea id="console" class="console"></textarea>
     </div>
   </div>
 </div>

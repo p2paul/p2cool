@@ -116,6 +116,12 @@ form .medbox {
 	top: 15px;
 	right: 15px;
 }
+#apDiv1 #upTime {
+	position: absolute;
+	top: 275px;
+	left: 500px;
+}
+
 
 #apDiv1 #MainGraph {
 	position: absolute;
@@ -181,4 +187,48 @@ form .medbox {
 }
 .righttxt {
 	text-align: right;
+}
+
+
+#g-holder {
+	height:300px;
+	position:absolute;
+}  
+  
+#canvasDiv{
+	width:400px;
+	height:400px;
+	position:absolute;
+	top:0px;
+	left:20px;
+	z-index:10;
+}  
+#x-label{
+	position:absolute;
+	z-index:2;
+	top:185px;
+	left:220px;
+	font-size:10px;
+}  
+  
+#y-label{
+	position:absolute;
+	z-index:2;
+	top:20px;
+	left:70px;
+	font-size:10px;
+}  
+  
+#z-label{
+	position:absolute;
+	z-index:2;
+	top:250px;
+	left:-5px;
+	font-size:10px;
+}  
+  
+#gInfo div.gText{  
+    position:absolute;  
+    z-index:-1;  
+    font:normal 10px Arial;  
 }
