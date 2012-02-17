@@ -349,6 +349,7 @@ my_share_counts_in_last_hour
 			if(sharr[lai]>0){
 				document.form2.plsr.value = roundNumber(ssarr[lai]/sharr[lai]*100,2)+"%";
 				document.form1.lcef.value = roundNumber((1-(ssarr[lai]/sharr[lai]))/(1-psarr[lai])*100, 2)+"%";
+				document.form1.lcdoa.value = roundNumber(sdarr[lai]/sharr[lai]*100,2)+"%";
 			}
 			document.form1.lcsh.value = sharr[lai]+"/"+ssarr[lai];
 			//printArray(sharr);
@@ -386,6 +387,7 @@ pool_hash_rate
 	});
 	
 	if (refreshRate>0){
+		if(rf)clearTimeout(rf);
 		rf=setTimeout("getJSONdata()",(refreshRate*1000));
 	}
 }
