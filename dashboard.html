@@ -355,7 +355,15 @@ my_share_counts_in_last_hour
 			var ft2 = new Date().getTime();
 			$('#console').append("Processed "+d.length+" records in "+"~"+(ft2-ft1)+" ms \n");
 			//document.close();
-			load3D(tmarr,mrarr,sharr,mnarr);
+			
+			if(document.getElementById('graph3d').checked){
+				load3D(tmarr,mrarr,sharr,mnarr);
+				document.getElementById('controls').style.display='block';
+				document.getElementById('canvasDiv').style.display='block';
+			} else {
+				document.getElementById('controls').style.display='none';
+				document.getElementById('canvasDiv').style.display='none';
+			}
 		},
 		timeout: 2000
 	});
@@ -454,7 +462,7 @@ function drawSpinControls(){
 	  <div style="position:relative; height:30px "><div id="refreshControl"></div></div>
       <div id="dispIP"></div>
       <a href="javascript: void(0);" onclick="remIP();">reset IP</a>
-      <br />
+	  <div>3d graph<input type="checkbox" id="graph3d" onclick="getJSONdata()" name="Graph3d" unchecked></div>
       <br />
       <a href="javascript: void(0);" onclick="noClutter();">no menu/toolbars</a>
       <br />
@@ -467,6 +475,7 @@ function drawSpinControls(){
       <a href="https://github.com/forrestv/p2pool" target="_new">github</a>
       <br />
       <a href="http://btcstats.net/p2pool" target="_new">pool hash rate</a>
+      <br />
     </div>
     <div id="heads">Local</div>
     <div id="tails">Pool</div>

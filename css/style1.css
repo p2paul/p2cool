@@ -207,6 +207,7 @@ form .medbox {
 }
 
 #g-holder #controls{
+	display:none;
 	position:absolute;
 	top:250px;
 	left:184px;
