@@ -376,18 +376,10 @@ pool_hash_rate
 		},
 		timeout: 1000
 	});
-	function consoleScrollDown(){
-		var console = document.getElementById('console');
-		console.scrollTop = console.scrollHeight;
-	}
 	
 	if (refreshRate>0){
 		rf=setTimeout("getJSONdata()",(refreshRate*1000));
 	}
-	
-	var cs=setTimeout("consoleScrollDown()",200);
-	
-
 }
 
 
