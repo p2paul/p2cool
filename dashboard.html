@@ -373,7 +373,7 @@ pool_hash_rate
 		dataType: 'json',
 		success: function(k){
 			document.form2.plspd.value = roundNumber(k.pool_hash_rate/1000000000, 2);
-			clearTimeout(timeOutTimer);
+			//clearTimeout(timeOutTimer);
 		},
 		timeout: 1000
 	});
