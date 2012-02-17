@@ -103,7 +103,7 @@ canvasGraph.prototype.drawAxis=function(){
 		xx=xx-this.factor;
 		yy=yy+this.factor;
 		perspectiveCompensation = i * this.factor * this.perspectiveFactor + (this.perspectiveFactor * this.factor - i);
-		this.ctx.strokeStyle=this.ctx.fillStyle = "rgba(200,200,200,0.5)";
+		this.ctx.strokeStyle=this.ctx.fillStyle = "rgba(200,200,200,0.3)";
         
         // Draw XY Grid lines		
 		this.ctx.fillRect(sx ,this.marginX,1,this.startY - this.marginX);
@@ -186,11 +186,11 @@ canvasGraph.prototype.drawBar=function(x,y,z){
 	this.ctx.fill();
 	
 	//main color
-	this.ctx.fillStyle = "rgba(189,189,243,0.7)";
+	this.ctx.fillStyle = "rgba(189,189,243,0.3)";
 	this.ctx.fillRect(x_3d-3,y_3d,7,y_height_scaled);
 	
 	//shadow	
-	this.ctx.fillStyle = "rgba(77,77,180,0.7)";
+	this.ctx.fillStyle = "rgba(77,77,180,0.3)";
 	this.ctx.fillRect(x_3d+4,y_3d-0,1,y_height_scaled);
 	this.ctx.fillRect(x_3d+5,y_3d-1,1,y_height_scaled);
 	this.ctx.fillRect(x_3d+6,y_3d-2,1,y_height_scaled);
@@ -198,7 +198,7 @@ canvasGraph.prototype.drawBar=function(x,y,z){
 	
 	//black outline 
 	
-	this.ctx.fillStyle = "rgba(0,0,0,0.7)";
+	this.ctx.fillStyle = "rgba(0,0,0,0.3)";
 	this.ctx.fillRect(x_3d-3,y_3d,1,y_height_scaled);
 	this.ctx.fillRect(x_3d+7,y_3d-3,1,y_height_scaled);
 	this.ctx.fillRect(x_3d-2,(y_3d+y_height_scaled),7,1);
