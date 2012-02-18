@@ -35,7 +35,7 @@
     <div id="userInput">
       <form action="javascript: void(0)" name="form0" id="formZero">
         <div>your p2pool ip address:port<div class="smalltxt">ex: 127.0.0.1:9332</div>
-          <input name="p2poolip" id="IPIN" type="text" size="24" maxlength="22" value="" />
+          <input name="p2poolip" id="IPIN" type="text" size="36" value="" />
         </div>
         <div>
           <input name="userin" type="button" value="done" onclick="checkInput(this.form);"/>
@@ -68,8 +68,8 @@
     <div id="heads">Local</div>
     <div id="tails">Pool</div>
     <div id="dispWal" class="smalltxt"></div>
+  <form action="#" name="form1">
     <div class="leftstat">
-      <form action="#" name="form1">
         <div class="statline">local(MH)
           <input name="lcspd" type="text" class="shortbox" value="-" readonly />
         </div>
@@ -93,10 +93,8 @@
         <div class="statline">doa(%)
           <input name="lcdoa" type="text" class="shortbox" value="--" readonly />
         </div>
-      </form>
     </div>
     <div class="rightstat">
-      <form action="#" name="form2">
         <div class="statline">
           <input name="plspd" type="text" class="medbox righttxt" value="---.--" readonly />
           pool speed (<div id="poolspeedprefix" class="inline">G</div>H/s) </div>
@@ -111,8 +109,8 @@
         <div class="statline">
           <input name="plsr" type="text" class="medbox righttxt" value="----" readonly />
           stale rate </div>
-      </form>
     </div>
+  </form>
     
     <div id="upTime" class="smalltxt"></div>
     

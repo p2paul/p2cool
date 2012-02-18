@@ -264,7 +264,7 @@ function getJSONdata(){
 			var lai = d.length-1;
 			var shr = 0;
 			if(sharr[lai]>0){
-				document.form2.plsr.value = roundNumber(ssarr[lai]/sharr[lai]*100,2)+"%";
+				document.form1.plsr.value = roundNumber(ssarr[lai]/sharr[lai]*100,2)+"%";
 				document.form1.lcef.value = roundNumber((1-(ssarr[lai]/sharr[lai]))/(1-psarr[lai])*100, 2)+"%";
 				document.form1.lcdoa.value = roundNumber(sdarr[lai]/sharr[lai]*100,2)+"%";
 			}
@@ -288,7 +288,7 @@ function getJSONdata(){
 		url: gsurl,
 		dataType: 'json',
 		success: function(k){
-			document.form2.plspd.value = roundNumber(k.pool_hash_rate/1000000000, 2);
+			document.form1.plspd.value = roundNumber(k.pool_hash_rate/1000000000, 2);
 			clearTimeout(timeOutTimer);
 		},
 		timeout: 1000
