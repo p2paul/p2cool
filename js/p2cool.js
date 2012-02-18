@@ -15,21 +15,33 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-var funcTimedOut = 5000;
+var funcTimedOut = 8000;
 var timeOutTimer;
 
 var htxt="http://";
 var localIP = "";
 var onLoginScreen = true;
+var show3dGraph = 0;
 
 //Spin controls
 var graphComp = 9;
 var refreshRate = 30;
 
 function pageLoaded(){
-	var li = getCookie('LocalIP');
+	if(get_cookie('Show3dGraph')==1){
+		document.getElementById("graph3dcheck").checked = true;
+		show3dGraph=1;
+	}else{
+		document.getElementById("graph3dcheck").checked = false;
+		show3dGraph=0;
+	}
+	var li = get_cookie('LocalIP');
+	var rr = get_cookie('RefreshRate');
 	localIP = li;
-	if(li==""){
+	if(rr!=undefined){
+		refreshRate=rr;
+	}
+	if(li==undefined){
 		document.getElementById('apDiv0').style.display = "block";
 		document.forms.form0.p2poolip.focus();
 	} else {
@@ -41,7 +53,6 @@ function pageLoaded(){
 		getJSONdata();
 		loadGraphImages();
 		drawSpinControls();
-
 	}
 	var nwd = window.innerWidth;
 	var ndp = parseInt((nwd - 820) / 2)+"px";
@@ -58,15 +69,31 @@ function checkInput(form){
 	//alert(form.p2poolip.value);
 	localIP = document.getElementById('IPIN').value;
 	document.getElementById('IPIN').value = "";
-	setCookie('LocalIP', localIP);
+	set_cookie('LocalIP', localIP, 365);
 	document.getElementById('apDiv1').style.display = "block";
 	document.getElementById('apDiv0').style.display = "none";
-	document.getElementById("dispIP").innerHTML = localIP;
+	if(document.getElementById("dispIP")!=undefined)document.getElementById("dispIP").innerHTML = localIP;
 	timeOutTimer=setTimeout("derpMe()",funcTimedOut);
 	getJSONdata();
-	loadGraphImages();
-	drawSpinControls();
+	if(document.getElementById('MainContainer')==undefined){
+		drawSpinControls('minimal');
+	}else{
+		loadGraphImages();
+		drawSpinControls();
+	}
 }
+
+function toggle3dGraph(box){
+	if(box.checked){
+		set_cookie('Show3dGraph',1,365);
+		show3dGraph = 1;
+	} else {
+		set_cookie('Show3dGraph',0,365);
+		show3dGraph = 0;
+	}
+	getJSONdata();
+}
+
 
 function keyHandler(e){
 	if (onLoginScreen){
@@ -99,22 +126,22 @@ function selectGraph(graphNum){
 	for (var i=1;i<7;i++){
 		if (graphNum==i){
 			document.bigGraph.src = htxt+localIP+graphsarr[i];
-			setCookie('FavGraph',i);
+			set_cookie('FavGraph',i,365);
 		}
 	}
 }
 
 function remIP(){
-	clearCookie('LocalIP');
+	del_cookie('LocalIP');
 	history.go(0);
 }
 
 function loadGraphImages(){
-	var fg = getCookie('FavGraph');
-	if (fg>0||fg<7){
-		document.bigGraph.src = htxt+localIP+graphsarr[1];
-	}else{
+	var fg = parseInt(get_cookie('FavGraph'));
+	if (fg>0&&fg<7){
 		document.bigGraph.src = htxt+localIP+graphsarr[fg];
+	}else{
+		document.bigGraph.src = htxt+localIP+graphsarr[1];
 	}
 	for (var i=1;i<7;i++){
 		document.getElementById('graph'+i).src = htxt+localIP+graphsarr[i];
@@ -122,11 +149,11 @@ function loadGraphImages(){
 }
 
 function noClutter() {
-	var NewWinHeight=650;
-	var NewWinWidth=830;
+	var NewWinHeight=280;
+	var NewWinWidth=140;
 	var NewWinPutX=10;
 	var NewWinPutY=10;
-	TheNewWin =window.open("dashboard.html",'p2pool dashboard','fullscreen=no,toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=no,resizable=no');
+	TheNewWin =window.open("minimal.html",'p2pool dashboard','fullscreen=no,toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=no,resizable=no');
 	TheNewWin.resizeTo(NewWinWidth,NewWinHeight);
 	//TheNewWin.moveTo(NewWinPutX,NewWinPutY);
 }
@@ -191,7 +218,7 @@ function getJSONdata(){
 			}
 			document.form1.lcspd.value = roundNumber((localspeed/1000000),2);
 		},
-		timeout: 1000
+		timeout: 3000
 	});
 	
 	$.ajax({
@@ -264,7 +291,7 @@ function getJSONdata(){
 			var lai = d.length-1;
 			var shr = 0;
 			if(sharr[lai]>0){
-				document.form1.plsr.value = roundNumber(ssarr[lai]/sharr[lai]*100,2)+"%";
+				document.form1.plsr.value = roundNumber(psarr[lai]*100,2)+"%";
 				document.form1.lcef.value = roundNumber((1-(ssarr[lai]/sharr[lai]))/(1-psarr[lai])*100, 2)+"%";
 				document.form1.lcdoa.value = roundNumber(sdarr[lai]/sharr[lai]*100,2)+"%";
 			}
@@ -272,16 +299,19 @@ function getJSONdata(){
 			var ft2 = new Date().getTime();
 			$('#console').append("Processed "+d.length+" records in "+"~"+(ft2-ft1)+" ms \n");
 			
-			if(document.getElementById('graph3d').checked){
-				load3D(tmarr,mrarr,sharr,mnarr);
-				document.getElementById('controls').style.display='block';
-				document.getElementById('canvasDiv').style.display='block';
-			} else {
-				document.getElementById('controls').style.display='none';
-				document.getElementById('canvasDiv').style.display='none';
+			var g3dchk = document.getElementById('graph3dcheck');
+			if(g3dchk != undefined){
+				if(show3dGraph == 1 ){
+					document.getElementById('canvasDiv').style.display='block';
+					document.getElementById('controls').style.display='block';
+					load3D(tmarr,mrarr,sharr,mnarr);
+				} else if(show3dGraph == 0 ){
+					document.getElementById('canvasDiv').style.display='none';
+					document.getElementById('controls').style.display='none';
+				}
 			}
 		},
-		timeout: 2000
+		timeout: 4000
 	});
 
 	$.ajax({
@@ -291,7 +321,7 @@ function getJSONdata(){
 			document.form1.plspd.value = roundNumber(k.pool_hash_rate/1000000000, 2);
 			clearTimeout(timeOutTimer);
 		},
-		timeout: 1000
+		timeout: 3000
 	});
 	
 	if (refreshRate>0){

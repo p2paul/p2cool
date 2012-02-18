@@ -1,0 +1,117 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="css/style2.css" rel="stylesheet" type="text/css" />
+<script src="js/cookies.js" type="text/javascript"></script>
+<script type="text/javascript" src="js/jquery.min.js"></script>
+<script type="text/javascript" src="js/spin_control.js"></script>
+<script type="text/javascript" src="js/p2coolmath.js"></script>
+<script type="text/javascript" src="js/p2cool.js"></script>
+<script type="text/javascript" src="js/p2coolspinctrl.js"></script>
+<title>p2pool ministats</title>
+<style type="text/css">
+a:link {
+	color: #999;
+	text-decoration: none;
+}
+a:visited {
+	text-decoration: none;
+	color: #999;
+}
+a:hover {
+	text-decoration: underline;
+	color: #A27575;
+}
+a:active {
+	text-decoration: none;
+	color: #999;
+}
+</style>
+</head>
+<body>
+<div id="apDiv0">
+  <form name="form0" action="#">
+    <input name="p2poolip" id="IPIN" type="text" size="36" value="" />
+    <input name="userin" type="button" value="done" onclick="checkInput(this.form);"/>
+  </form>
+</div>
+<div id="apDiv1">
+  <form name="form1" action="#">
+    <table border="0">
+      <tr>
+        <td>Local</td>
+        <td><div class="statline">
+            <input name="lcspd" type="text" class="shortbox" value="-" readonly />
+          </div></td>
+      </tr>
+      <tr>
+        <td>Pool</td>
+        <td><div class="statline">
+            <input name="plspd" type="text" class="medbox righttxt" value="---.--" readonly />
+          </div></td>
+      </tr>
+      <tr>
+        <td>Efficiency</td>
+        <td><div class="statline">
+            <input name="lcef" type="text" class="shortbox" value="---%" readonly />
+          </div></td>
+      </tr>
+      <tr>
+        <td>Shares</td>
+        <td><div class="statline">
+            <input name="lcsh" type="text" class="shortbox" value="-" readonly />
+          </div></td>
+      </tr>
+      <tr>
+        <td>Payout</td>
+        <td><div class="statline">
+            <input name="lcpo" type="text" class="shortbox" value="-" readonly />
+          </div></td>
+      </tr>
+      <tr>
+        <td>DOA</td>
+        <td><div class="statline">
+            <input name="lcdoa" type="text" class="shortbox" value="--" readonly />
+          </div></td>
+      </tr>
+      <tr>
+        <td>Pool Stale</td>
+        <td><div class="statline">
+            <input name="plsr" type="text" class="medbox righttxt" value="----" readonly />
+          </div></td>
+      </tr>
+      <tr>
+        <td>refresh</td>
+        <td><div id="refreshControl"></div></td>
+      </tr>
+      <tr>
+      	<td><a href="dashboard.html">dashboard</a></td>
+        <td><a href="javascript: void(0);" onclick="remIP();">reset</a></td>
+      </tr>
+    </table>
+  </form>
+</div>
+<script type="text/javascript">
+var li = get_cookie('LocalIP');
+var rr = get_cookie('RefreshRate');
+localIP = li;
+if(rr!=undefined){
+	refreshRate=rr;
+}
+if(li==undefined){
+	document.getElementById('apDiv0').style.display = "block";
+	document.forms.form0.p2poolip.focus();
+} else {
+	onLoginScreen = false;
+	localIP = li;
+	timeOutTimer=setTimeout("derpMe()",funcTimedOut);
+	document.getElementById('apDiv1').style.display = "block";
+	getJSONdata();
+	//loadGraphImages();
+	drawSpinControls('minimal');
+}
+
+</script>
+</body>
+</html>

@@ -61,5 +61,4 @@ function load3D(xx,yy,zz,names){
 		gData[i-tmp]={x:_x, y:_y, z:_z};
 	}
 	g.drawGraph(gData);
-
 }

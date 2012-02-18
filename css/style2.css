@@ -1,0 +1,145 @@
+@charset "utf-8";
+/* CSS Document */
+
+html{
+	margin:0;
+	padding:0;
+}
+
+body {
+	background-color:#000000;
+	color:#CCCCCC;
+	font-size: 10px;
+	font-family:"Courier New", Courier, monospace;
+}input {
+	width: 80px;
+	font-size:10px;
+	font-family:"Courier New", Courier, monospace;
+	font-weight:bold;
+	background-color:#000000;
+	color:#ffffff;
+	border:0;
+	margin-left: 3px;
+}
+
+#apDiv0 {
+	position:relative;
+	padding: 0;
+	margin: 0;
+	z-index: 10;
+	display: none;
+}
+#apDiv0 input {
+	border: 1px inset #555555;
+}
+#apDiv1 {
+	position: relative;
+	display: none;
+}
+
+
+
+
+/*------------*/
+/*Spin Control*/
+/*------------*/
+
+
+.spinInput, .spinContainer
+{
+  /* Change this to modify the default spin control background color*/
+  background-color: #000000;
+}
+
+.spinLeftRightEdge, .spinTopBottomEdge
+{
+  position: absolute;
+  overflow: hidden;
+  /* Change this to modify the default spin control border color*/
+  background-color: #000000;
+}
+  
+.spinContainer
+{
+	position:relative;
+  font-size: 0px;
+  height: 20px;
+}
+
+.spinLeftRightEdge
+{
+  height: 20px;
+  width: 1px;
+}
+
+.spinTopBottomEdge
+{
+  height: 1px;
+  left: 1px;
+}
+
+.spinInput
+{
+  position: absolute;
+  top: 2px;
+  left: -1px;
+  height: 12px;
+  border: 1px inset #333333;
+  /* Change this to modify the default spin control font, font color, and font size*/
+	font-family:"Courier New", Courier, monospace;
+	font-weight: bold;
+	background: #000000;
+	text-align:right;
+}
+
+.spinUpBtn, .spinUpBtnHover, .spinUpBtnPress, .spinDownBtn, .spinDownBtnHover, .spinDownBtnPress
+{
+  position: absolute;
+  width: 15px;
+  height: 8px;
+  right: 2px;
+  background-image: url('../img/spin_control_buttons.png');
+  background-repeat: no-repeat;
+  /* Change this to modify the default button color*/
+  background-color: #000000;
+}
+
+.spinUpBtn, .spinUpBtnHover, .spinUpBtnPress
+{
+  top: 2px;
+}
+
+.spinDownBtn, .spinDownBtnHover, .spinDownBtnPress
+{
+  top: 10px;
+}
+
+.spinUpBtn
+{
+  background-position:0px 0px;
+}
+
+.spinUpBtnHover
+{
+  background-position:0px -16px;
+}
+
+.spinUpBtnPress
+{
+  background-position:0px -32px;
+}
+
+.spinDownBtn
+{
+  background-position:0px -8px;
+}
+
+.spinDownBtnHover
+{
+  background-position:0px -24px;
+}
+
+.spinDownBtnPress
+{
+  background-position:0px -40px;
+}
