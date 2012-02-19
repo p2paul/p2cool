@@ -30,10 +30,14 @@ a:active {
 </style>
 </head>
 <body>
+<noscript>
+requires<br />
+javascript
+</noscript>
 <div id="apDiv0">
   <form name="form0" action="#">
-    <input name="p2poolip" id="IPIN" type="text" size="36" value="" />
-    <input name="userin" type="button" value="done" onclick="checkInput(this.form);"/>
+    <div style="margin-top:30px;"><input name="p2poolip" id="IPIN" type="text" size="36" value="" /></div>
+    <div style="margin-top:30px;"><input name="userin" type="button" value="done" onclick="checkInput(this.form);"/></div>
   </form>
 </div>
 <div id="apDiv1">
@@ -93,24 +97,7 @@ a:active {
   </form>
 </div>
 <script type="text/javascript">
-var li = get_cookie('LocalIP');
-var rr = get_cookie('RefreshRate');
-localIP = li;
-if(rr!=undefined){
-	refreshRate=rr;
-}
-if(li==undefined){
-	document.getElementById('apDiv0').style.display = "block";
-	document.forms.form0.p2poolip.focus();
-} else {
-	onLoginScreen = false;
-	localIP = li;
-	timeOutTimer=setTimeout("derpMe()",funcTimedOut);
-	document.getElementById('apDiv1').style.display = "block";
-	getJSONdata();
-	//loadGraphImages();
-	drawSpinControls('minimal');
-}
+minLoaded();
 
 </script>
 </body>

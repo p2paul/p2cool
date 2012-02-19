@@ -7,12 +7,13 @@ html {
 }
 
 body {
-	background-repeat: no-repeat;
+	background-repeat: repeat-x;
+	background-image:url(../img/p2cool-bg-1.1.jpg);
 	padding: 0;
 	font-family: Verdana, Geneva, sans-serif;
 	color:#FFF;
 	font-size: 14px;
-	background-color: #656A72;
+	background-color: #08111f; /*  656A72 */
 	margin: 0;
 }
 form input {

@@ -17,17 +17,21 @@
 */
 var funcTimedOut = 8000;
 var timeOutTimer;
+var thisPage="";
 
 var htxt="http://";
-var localIP = "";
+var li = get_cookie('LocalIP');
+//var li = "127.0.0.1:9332";
 var onLoginScreen = true;
 var show3dGraph = 0;
+var rr = get_cookie('RefreshRate');
 
 //Spin controls
 var graphComp = 9;
 var refreshRate = 30;
 
-function pageLoaded(){
+function dashLoaded(){
+	thisPage="dash";
 	if(get_cookie('Show3dGraph')==1){
 		document.getElementById("graph3dcheck").checked = true;
 		show3dGraph=1;
@@ -35,9 +39,6 @@ function pageLoaded(){
 		document.getElementById("graph3dcheck").checked = false;
 		show3dGraph=0;
 	}
-	var li = get_cookie('LocalIP');
-	var rr = get_cookie('RefreshRate');
-	localIP = li;
 	if(rr!=undefined){
 		refreshRate=rr;
 	}
@@ -46,38 +47,60 @@ function pageLoaded(){
 		document.forms.form0.p2poolip.focus();
 	} else {
 		onLoginScreen = false;
-		localIP = li;
 		timeOutTimer=setTimeout("derpMe()",funcTimedOut);
 		document.getElementById('apDiv1').style.display = "block";
 		document.getElementById("dispIP").innerHTML = li;
 		getJSONdata();
 		loadGraphImages();
 		drawSpinControls();
+
 	}
 	var nwd = window.innerWidth;
 	var ndp = parseInt((nwd - 820) / 2)+"px";
-	document.getElementById('MainContainer').style.marginLeft = ndp;
+	document.getElementById("MainContainer").style.marginLeft = ndp;
+}
+
+function minLoaded(){
+	thisPage = "min";
+	if(rr!=undefined){
+		refreshRate=rr;
+	}
+	if(li==undefined){
+		document.getElementById('apDiv0').style.display = "block";
+		document.forms.form0.p2poolip.focus();
+	} else {
+		onLoginScreen = false;
+		timeOutTimer=setTimeout("derpMe()",funcTimedOut);
+		document.getElementById('apDiv1').style.display = "block";
+		getJSONdata();
+		//loadGraphImages();
+		drawSpinControls('minimal');
+	}
 }
 
 function derpMe(){
 	window.stop();
-	var answer = confirm('Couldn\'t connect to specified address: '+localIP+'\ntimeout='+funcTimedOut+'\n\nWould you like to try another ip?');
-	if (answer) remIP();
+	if(thisPage=="dash"){
+		var answer = confirm('Couldn\'t connect to specified address: '+li+'\ntimeout='+funcTimedOut+'\n\nWould you like to try another ip?');
+		if (answer) remIP();
+	} else if(thisPage=="min"){
+		remIP();
+	}
 }
 
 function checkInput(form){
 	//alert(form.p2poolip.value);
-	localIP = document.getElementById('IPIN').value;
+	li = document.getElementById('IPIN').value;
 	document.getElementById('IPIN').value = "";
-	set_cookie('LocalIP', localIP, 365);
+	set_cookie('LocalIP', li, 365);
 	document.getElementById('apDiv1').style.display = "block";
 	document.getElementById('apDiv0').style.display = "none";
-	if(document.getElementById("dispIP")!=undefined)document.getElementById("dispIP").innerHTML = localIP;
+	if(document.getElementById("dispIP")!=undefined)document.getElementById("dispIP").innerHTML = li;
 	timeOutTimer=setTimeout("derpMe()",funcTimedOut);
 	getJSONdata();
-	if(document.getElementById('MainContainer')==undefined){
+	if(thisPage=="min"){
 		drawSpinControls('minimal');
-	}else{
+	}else if(thisPage=="dash"){
 		loadGraphImages();
 		drawSpinControls();
 	}
@@ -125,7 +148,7 @@ var graphsarr=new Array(
 function selectGraph(graphNum){
 	for (var i=1;i<7;i++){
 		if (graphNum==i){
-			document.bigGraph.src = htxt+localIP+graphsarr[i];
+			document.bigGraph.src = htxt+li+graphsarr[i];
 			set_cookie('FavGraph',i,365);
 		}
 	}
@@ -139,12 +162,12 @@ function remIP(){
 function loadGraphImages(){
 	var fg = parseInt(get_cookie('FavGraph'));
 	if (fg>0&&fg<7){
-		document.bigGraph.src = htxt+localIP+graphsarr[fg];
+		document.bigGraph.src = htxt+li+graphsarr[fg];
 	}else{
-		document.bigGraph.src = htxt+localIP+graphsarr[1];
+		document.bigGraph.src = htxt+li+graphsarr[1];
 	}
 	for (var i=1;i<7;i++){
-		document.getElementById('graph'+i).src = htxt+localIP+graphsarr[i];
+		document.getElementById('graph'+i).src = htxt+li+graphsarr[i];
 	}
 }
 
@@ -160,11 +183,32 @@ function noClutter() {
 
 
 window.onresize = function(event){
-	var nwd = window.innerWidth;
-	var ndp = parseInt((nwd - 820) / 2)+"px";
-	document.getElementById('MainContainer').style.marginLeft = ndp;
+	if(thisPage=="dash"){
+		var nwd = window.innerWidth;
+		var ndp = parseInt((nwd - 820) / 2)+"px";
+		document.getElementById('MainContainer').style.marginLeft = ndp;
+	}
 }
+function writeConsole(str){
+	$("#console").append("\n"+str);
 
+}
+function checkTime(i){
+	if (i<10){
+		i="0" + i;
+	}
+	return i;
+}
+function getCurrentTime(){
+	var d = new Date();
+	var h=d.getHours();
+	var m=d.getMinutes();
+	var s=d.getSeconds();
+	h=checkTime(h);
+	m=checkTime(m);
+	s=checkTime(s);
+	return(h+":"+m+":"+s);
+}
 function printArray(a){
 	document.write("<table width=\"100\" border=\"1\">");
 	for (var i=0; i<a.length; i++) {
@@ -186,13 +230,25 @@ var soarr = new Array(); //stale_shares_breakdown.orphan
 var mdarr = new Array(); //local_dead_hash_rates (miner data)
 var rf;
 var uptime;
+function scrollConsole(c){
+	c.scrollTop = c.scrollHeight;
+}
 function getJSONdata(){
-	var lsurl = htxt+localIP+'/local_stats';
-	var gsurl = htxt+localIP+'/global_stats';
-	var paurl = htxt+localIP+'/payout_addr';
-	var cpurl = htxt+localIP+'/current_payouts';
-	var wlurl = htxt+localIP+'/web/log';
-	var uturl = htxt+localIP+'/uptime';
+	var lsurl = htxt+li+'/local_stats';
+	var gsurl = htxt+li+'/global_stats';
+	var paurl = htxt+li+'/payout_addr';
+	var cpurl = htxt+li+'/current_payouts';
+	var wlurl = htxt+li+'/web/log';
+	var uturl = htxt+li+'/uptime';
+
+	var fwarr = new Array(0,0,0,0,0);
+	function funcWatch(ind){
+		fwarr[ind]=1;
+		if(thisPage=="dash"&&fwarr[0]==1&&fwarr[1]==1&&fwarr[2]==1&&fwarr[3]==1&&fwarr[4]==1){
+			var sd=setTimeout("scrollConsole(document.getElementById('console'))",50);
+		}
+	}
+
 	/*$(document).ajaxError(function(event, request, settings, err) {alert("error: " + settings.url + ": " + err.message);});*/
 	/*$.get(servaddr + '/rate', function(data) {$('#hashrate').html(data / 1000000000);});*/
 	$.get(uturl,function(uptime) {
@@ -201,11 +257,12 @@ function getJSONdata(){
 		var h=Math.floor((uptime%86400)/3600);
 		var m=Math.floor((uptime%3600)/60);
 		var s=Math.ceil(uptime%60);
-		if (h<10)h="0"+h;
-		if (m<10)m="0"+m;
-		if (s<10)s="0"+s;
+		h=checkTime(h);
+		m=checkTime(m);
+		s=checkTime(s);
 		$('#upTime').html('uptime:  '+d+'d  '+h+':'+m+':'+s);
-		$("#console").append(" refreshed at: "+d+'d '+h+':'+m+':'+s+" \n");
+		//$("#console").append(" refreshed at: "+d+'d '+h+':'+m+':'+s+" \n");
+		funcWatch(0);
 	});
 	
 	$.ajax({
@@ -215,8 +272,11 @@ function getJSONdata(){
 			var localspeed = 0;
 			for(var i in k.miner_hash_rates) {
 				localspeed = localspeed + k.miner_hash_rates[i];
+				var sp = Math.round(k.miner_hash_rates[i]/10000)/100
+				writeConsole(getCurrentTime()+" "+i+": "+sp+" MH/s");
 			}
 			document.form1.lcspd.value = roundNumber((localspeed/1000000),2);
+			funcWatch(1);
 		},
 		timeout: 3000
 	});
@@ -229,6 +289,7 @@ function getJSONdata(){
 			$.getJSON(cpurl, function(pays){
 				document.form1.lcpo.value=roundNumber(pays[d],4);
 			});
+			funcWatch(2);
 		}
 	});
 	
@@ -297,8 +358,8 @@ function getJSONdata(){
 			}
 			document.form1.lcsh.value = sharr[lai]+"/"+ssarr[lai];
 			var ft2 = new Date().getTime();
-			$('#console').append("Processed "+d.length+" records in "+"~"+(ft2-ft1)+" ms \n");
-			
+			//$('#console').append("Processed "+d.length+" records in "+"~"+(ft2-ft1)+" ms \n");
+
 			var g3dchk = document.getElementById('graph3dcheck');
 			if(g3dchk != undefined){
 				if(show3dGraph == 1 ){
@@ -310,6 +371,7 @@ function getJSONdata(){
 					document.getElementById('controls').style.display='none';
 				}
 			}
+			funcWatch(3);
 		},
 		timeout: 4000
 	});
@@ -320,6 +382,7 @@ function getJSONdata(){
 		success: function(k){
 			document.form1.plspd.value = roundNumber(k.pool_hash_rate/1000000000, 2);
 			clearTimeout(timeOutTimer);
+			funcWatch(4);
 		},
 		timeout: 3000
 	});

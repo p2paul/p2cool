@@ -1,1 +1,9 @@
-This readme will self destruct...
+change the following lines in p2cool.js to skip ip input screen permanently
+//var li = get_cookie('LocalIP');
+var li = "yourp2pool:9332";
+
+Preferences such as refresh time, your p2pool address,show/hide 3d graph are stored in the browser cookies. 
+
+Right-arrow on the first page attempts to connect to the specified address. Refresh time and 3d graph spinners work with middle mouse too.
+
+more to come...
