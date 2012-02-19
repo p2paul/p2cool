@@ -1,9 +1,28 @@
-change the following lines in p2cool.js to skip ip input screen permanently
+Browser Compatibility:
+==================================================================
+Firefox -- working
+Chrome  -- working (no cookies, see below notes)
+Opera   -- zoom property in jquery causing complete failure (on one machine)
+IE      -- obsolete ?
+
+Notes:
+==================================================================
+Preferences such as refresh time, your p2pool address,show/hide 3d graph are stored in the browser cookies. If you have cookies disabled then:
+Change the following lines in p2cool.js to skip ip input screen permanently
 //var li = get_cookie('LocalIP');
 var li = "yourp2pool:9332";
 
-Preferences such as refresh time, your p2pool address,show/hide 3d graph are stored in the browser cookies. 
+Right-arrow key on the first page attempts to connect to the specified address. If you've put the address in the field before and your browser remembered the field down > right will connect. Protip: use the delete key on old/invalid auto-fill entries.
 
-Right-arrow on the first page attempts to connect to the specified address. Refresh time and 3d graph spinners work with middle mouse too.
+Refresh time and 3d graph spinners work with middle mouse too.
 
-more to come...
+Other:
+==================================================================
+
+features in consideration:
+- show trends with red/green color intensity
+- tooltip graph for every stat
+
+
+generosity to:
+1svyXNG1igPSWg4TieJp3M2RUqughKyvE

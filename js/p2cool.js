@@ -284,14 +284,18 @@ function getJSONdata(){
 		},
 		timeout: 3000
 	});
-	
 	$.ajax({
 		url:paurl,
 		dataType:'json',
 		success: function(d){
+			var e = "Address. Address: "+d;
 			$('#dispWal').html("Payout to: "+d.replace("Address. Address:",""));
 			$.getJSON(cpurl, function(pays){
-				document.form1.lcpo.value=roundNumber(pays[d],4);
+				document.form1.lcpo.value=roundNumber(pays[e],4);
+				for(i in pays){
+					//writeConsole("Key: "+i+"  Value: "+pays[i]+"\n"+pays[d]);
+					var foo;
+				}
 			});
 			funcWatch(2);
 		}
