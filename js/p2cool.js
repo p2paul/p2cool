@@ -20,8 +20,12 @@ var timeOutTimer;
 var thisPage="";
 
 var htxt="http://";
-var li = get_cookie('LocalIP');
-//var li = "127.0.0.1:9332";
+
+
+var li = get_cookie('LocalIP');  //comment this
+//var li = "127.0.0.1:9332";  //change and uncomment this
+
+
 var onLoginScreen = true;
 var show3dGraph = 0;
 var rr = get_cookie('RefreshRate');
