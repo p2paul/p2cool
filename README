@@ -2,8 +2,8 @@ Browser Compatibility:
 ==================================================================
 Firefox -- working
 Chrome  -- working (no cookies, see below notes)
-Opera   -- zoom property in jquery causing complete failure (on one machine)
-IE      -- obsolete ?
+Opera   -- zoom property in jquery causing failure
+IE      -- not tested
 
 Notes:
 ==================================================================
@@ -16,11 +16,13 @@ Right-arrow key on the first page attempts to connect to the specified address. 
 
 Refresh time and 3d graph spinners work with middle mouse too.
 
+Console is cleared after 50 calls to writeConsole() to reduce memory leakage[if(cbfr>50)]. Other objects might also need their children cleared.
+
 Other:
 ==================================================================
-
 features in consideration:
-- show trends with red/green color intensity
+- show trends with red/green color intensity (partially working on the dashboard)
+	--compares local_stats.miner_hash_rates to an average of the last hour
 - tooltip graph for every stat
 
 

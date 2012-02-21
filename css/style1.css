@@ -19,7 +19,7 @@ body {
 form input {
 	font-family:"Courier New", Courier, monospace;
 	font-weight: bold;
-	background: #CDCFD2;
+	background: #FFFFFF;
 }
 
 
@@ -252,10 +252,9 @@ form .medbox {
     font:normal 10px Arial;  
 }
 
+  /*------------*/
+ /*Spin Control*/
 /*------------*/
-/*Spin Control*/
-/*------------*/
-
 
 .spinInput, .spinContainer
 {

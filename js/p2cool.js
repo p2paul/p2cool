@@ -21,6 +21,7 @@ var thisPage="";
 
 var htxt="http://";
 
+var inputs = new Array(); //array to store stat elements
 
 var li = get_cookie('LocalIP');  //comment this
 //var li = "127.0.0.1:9332";  //change and uncomment this
@@ -46,10 +47,10 @@ function dashLoaded(){
 	if(rr!=undefined){
 		refreshRate=rr;
 	}
-	if(li==undefined){
+	if(li==undefined){  //if ip is undefined prompt
 		document.getElementById('apDiv0').style.display = "block";
 		document.forms.form0.p2poolip.focus();
-	} else {
+	} else {			//not on "login" screen
 		onLoginScreen = false;
 		timeOutTimer=setTimeout("derpMe()",funcTimedOut);
 		document.getElementById('apDiv1').style.display = "block";
@@ -57,7 +58,7 @@ function dashLoaded(){
 		getJSONdata();
 		loadGraphImages();
 		drawSpinControls();
-
+		inputs[0]=document.form1.lcspd;
 	}
 	var nwd = window.innerWidth;
 	var ndp = parseInt((nwd - 820) / 2)+"px";
@@ -120,7 +121,6 @@ function toggle3dGraph(box){
 	}
 	getJSONdata();
 }
-
 
 function keyHandler(e){
 	if (onLoginScreen){
@@ -193,10 +193,6 @@ window.onresize = function(event){
 		document.getElementById('MainContainer').style.marginLeft = ndp;
 	}
 }
-function writeConsole(str){
-	$("#console").append("\n"+str);
-
-}
 function checkTime(i){
 	if (i<10){
 		i="0" + i;
@@ -212,6 +208,16 @@ function getCurrentTime(){
 	m=checkTime(m);
 	s=checkTime(s);
 	return(h+":"+m+":"+s);
+}
+
+var cbfr=0;
+function writeConsole(str){
+	if(cbfr>50){
+		$("#console").empty();
+		cbfr=0;
+	}
+	$("#console").prepend(str+"\n");
+	cbfr++;
 }
 function printArray(a){
 	document.write("<table width=\"100\" border=\"1\">");
@@ -232,12 +238,71 @@ var tmarr = new Array(); //time
 var sdarr = new Array(); //stale_shares_breakdown.doa
 var soarr = new Array(); //stale_shares_breakdown.orphan
 var mdarr = new Array(); //local_dead_hash_rates (miner data)
+
+var localspeed = 0; // current local speed
 var rf;
 var uptime;
-function scrollConsole(c){
-	c.scrollTop = c.scrollHeight;
+
+var minarr = new Array();
+var topSpeed = 0;
+
+function clearVars(){
+	minarr= [];
+	ssarr = [];
+	mnarr = [];
+	mrarr = [];
+	prarr = [];
+	sharr = [];
+	psarr = [];
+	tmarr = [];
+	sdarr = [];
+	soarr = [];
+	mdarr = [];
+	uniqueMinerNames = [];
+	minerIsActive = [];
+	activeMiners = 0;
+	topSpeed = 0
 }
+function sortMinerData(){
+	//spot miner names
+	var mi = 0;
+	for (var q=0;q<mrarr.length-1;q++){
+		for(var t=0;t<mnarr[q].length;t++){
+			if ((uniqueMinerNames.indexOf(mnarr[q][t]) == -1)&&(typeof mnarr[q][t] != 'undefined')){
+				uniqueMinerNames.push(mnarr[q][t]);
+				minarr[mi]=new Array();
+				mi++;
+			}
+		}
+	}
+	for (var q=0;q<tmarr.length-1;q++){
+		for(var t=0;t<uniqueMinerNames.length;t++){
+		//writeConsole(q+" "+t+": "+mrarr[q][t]);
+			if(typeof mrarr[q][t] != 'undefined'){
+				minarr[t].push(Math.round(mrarr[q][t]/1000000));
+			} else {
+				minarr[t].push(0);
+			}
+		}
+	}
+	for(var v=0;v<uniqueMinerNames.length;v++){
+		if (minarr[v][minarr[v].length-1]==0){
+			minerIsActive[v]=false;
+		}else{
+			//$('#console').append(minarr[v][minarr[v].length-1]+"\n");
+			minerIsActive[v]=true;
+			activeMiners++;
+		}
+		topSpeed += getHigh(minarr[v]);
+		//$('#console').append(uniqueMinerNames[v]+": "+minarr[v][minarr[v].length-1]+"\n");
+	}
+
+}
+
 function getJSONdata(){
+
+	clearVars();
+
 	var lsurl = htxt+li+'/local_stats';
 	var gsurl = htxt+li+'/global_stats';
 	var paurl = htxt+li+'/payout_addr';
@@ -246,10 +311,25 @@ function getJSONdata(){
 	var uturl = htxt+li+'/uptime';
 
 	var fwarr = new Array(0,0,0,0,0);
+
+	//when all functions in GetJSONdata have populated local arrays
 	function funcWatch(ind){
 		fwarr[ind]=1;
 		if(thisPage=="dash"&&fwarr[0]==1&&fwarr[1]==1&&fwarr[2]==1&&fwarr[3]==1&&fwarr[4]==1){
-			var sd=setTimeout("scrollConsole(document.getElementById('console'))",50);
+			sortMinerData();
+			colorStat(inputs[0],thisPage);
+			var g3dchk = document.getElementById('graph3dcheck');
+			if(g3dchk != undefined){
+				if(show3dGraph == 1 ){
+					document.getElementById('canvasDiv').style.display='block';
+					document.getElementById('controls').style.display='block';
+					load3D(tmarr,mrarr,sharr,mnarr);
+				} else if(show3dGraph == 0 ){
+					document.getElementById('canvasDiv').style.display='none';
+					document.getElementById('controls').style.display='none';
+				}
+			}
+			fwarr=[];
 		}
 	}
 
@@ -268,12 +348,11 @@ function getJSONdata(){
 		//$("#console").append(" refreshed at: "+d+'d '+h+':'+m+':'+s+" \n");
 		funcWatch(0);
 	});
-	
+	localspeed = 0;
 	$.ajax({
 		url: lsurl,
 		dataType: 'json',
 		success: function(k){
-			var localspeed = 0;
 			for(var i in k.miner_hash_rates) {
 				localspeed = localspeed + k.miner_hash_rates[i];
 				var sp = Math.round(k.miner_hash_rates[i]/10000)/100
@@ -292,10 +371,6 @@ function getJSONdata(){
 			$('#dispWal').html("Payout to: "+d.replace("Address. Address:",""));
 			$.getJSON(cpurl, function(pays){
 				document.form1.lcpo.value=roundNumber(pays[e],4);
-				for(i in pays){
-					//writeConsole("Key: "+i+"  Value: "+pays[i]+"\n"+pays[d]);
-					var foo;
-				}
 			});
 			funcWatch(2);
 		}
@@ -366,19 +441,8 @@ function getJSONdata(){
 			}
 			document.form1.lcsh.value = sharr[lai]+"/"+ssarr[lai];
 			var ft2 = new Date().getTime();
-			//$('#console').append("Processed "+d.length+" records in "+"~"+(ft2-ft1)+" ms \n");
+			//writeConsole("Processed "+d.length+" records in "+"~"+(ft2-ft1)+" ms");
 
-			var g3dchk = document.getElementById('graph3dcheck');
-			if(g3dchk != undefined){
-				if(show3dGraph == 1 ){
-					document.getElementById('canvasDiv').style.display='block';
-					document.getElementById('controls').style.display='block';
-					load3D(tmarr,mrarr,sharr,mnarr);
-				} else if(show3dGraph == 0 ){
-					document.getElementById('canvasDiv').style.display='none';
-					document.getElementById('controls').style.display='none';
-				}
-			}
 			funcWatch(3);
 		},
 		timeout: 4000
