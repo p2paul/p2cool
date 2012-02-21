@@ -59,6 +59,7 @@ function dashLoaded(){
 		loadGraphImages();
 		drawSpinControls();
 		inputs[0]=document.form1.lcspd;
+		inputs[1]=document.form1.lcpo;
 	}
 	var nwd = window.innerWidth;
 	var ndp = parseInt((nwd - 820) / 2)+"px";
@@ -80,6 +81,8 @@ function minLoaded(){
 		getJSONdata();
 		//loadGraphImages();
 		drawSpinControls('minimal');
+		inputs[0]=document.form1.lcspd;
+		inputs[1]=document.form1.lcpo;
 	}
 }
 
@@ -317,7 +320,7 @@ function getJSONdata(){
 		fwarr[ind]=1;
 		if(thisPage=="dash"&&fwarr[0]==1&&fwarr[1]==1&&fwarr[2]==1&&fwarr[3]==1&&fwarr[4]==1){
 			sortMinerData();
-			colorStat(inputs[0],thisPage);
+			colorStat(inputs[0],0,thisPage);
 			var g3dchk = document.getElementById('graph3dcheck');
 			if(g3dchk != undefined){
 				if(show3dGraph == 1 ){
@@ -330,6 +333,10 @@ function getJSONdata(){
 				}
 			}
 			fwarr=[];
+		}else if(thisPage=="min"&&fwarr[0]==1&&fwarr[1]==1&&fwarr[2]==1&&fwarr[3]==1&&fwarr[4]==1){
+			sortMinerData();
+			colorStat(inputs[0],0,thisPage);
+			//colorStat(inputs[1],1,thisPage);
 		}
 	}
 
