@@ -51,7 +51,7 @@
 	  <div style="position:relative; height:30px "><div id="refreshControl"></div></div>
       <div id="dispIP"></div>
       <a href="javascript: void(0);" onclick="remIP();">reset IP</a>
-	  <div>3d graph<input type="checkbox" id="graph3dcheck" onclick="toggle3dGraph(this)" name="Graph3d"></div>
+	  <div style="margin-top:10px;">3d graph<input type="checkbox" id="graph3dcheck" onclick="toggle3dGraph(this)" name="Graph3d"></div>
       <br />
       <a href="javascript: void(0);" onclick="noClutter();">minimal</a>
       <br />
@@ -63,7 +63,7 @@
       <br />
       <a href="https://github.com/forrestv/p2pool" target="_new">github</a>
       <br />
-      <a href="http://btcstats.net/p2pool" target="_new">pool hash rate</a>
+      <a href="http://p2pool.info/" target="_new">pool hash rate</a>
       <br />
     </div>
     <div id="heads">Local</div>
@@ -84,10 +84,10 @@
         <div class="statline">~share time
           <input name="lcsht" type="text" class="shortbox" value="-" readonly />
         </div>
-        <div class="statline">peers
-          <input name="lcp" type="text" class="shortbox" value="--(--)" readonly />
-        </div>
 		-->
+        <div class="statline">peers
+          <input name="lcpr" type="text" class="shortbox" value="--(--)" readonly />
+        </div>
         <div class="statline">efficiency
           <input name="lcef" type="text" class="shortbox" value="---%" readonly />
         </div>
@@ -99,14 +99,13 @@
         <div class="statline">
           <input name="plspd" type="text" class="medbox righttxt" value="---.--" readonly />
           pool speed (<div id="poolspeedprefix" class="inline">G</div>H/s) </div>
-<!--
+
         <div class="statline">
           <input name="plpo" type="text" class="medbox righttxt" value="--.----" readonly />
           block payout</div>
         <div class="statline">
           <input name="plsd" type="text" class="medbox righttxt" value="-.----" readonly />
-          share difficulty</div>
--->
+          attempts/pool hash</div>
         <div class="statline">
           <input name="plsr" type="text" class="medbox righttxt" value="----" readonly />
           stale rate </div>

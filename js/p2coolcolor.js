@@ -3,10 +3,6 @@
 var avgTime = 12; //12*5min=1hr of data
 var aTMin = avgTime*5;
 
-function storePayout(){
-	
-}
-
 function getStatAvg(arr,deep){
 	if(arr!='undefined'){
 		var n = arr.length-1;
@@ -40,7 +36,7 @@ function colorStat(elm,inp,thisPage){
 		rng = Math.round(avg/20); //20 sensitivity 10 would be less
 		break;
 	case 1:
-		cur = Math.round(0);
+		//cur = Math.round(0);
 		break;
 	default:
 	  writeConsole("p2coolcolor.js case: "+inp+" not specified");

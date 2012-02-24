@@ -8,10 +8,10 @@ function load3D(xx,yy,zz,names){
 	xx = compArray(xx,fac);
 	zz = compArray(zz,fac);
 	var leng=xx.length;
-	
 	var yHi = topSpeed;
 	
-	// time speed share miner_names // xx yy zz names 
+	// time speed share miner_names // xx yy zz names
+	var yy = new Array();
 	for(var v=0;v<uniqueMinerNames.length;v++){
 		yy[v] = new Array();
 		yy[v] = compArray(minarr[v],fac,true);
@@ -31,9 +31,13 @@ function load3D(xx,yy,zz,names){
 		for(var v=0;v<uniqueMinerNames.length;v++){
 			_y += yy[v][i];
 		}
-		_y = parseInt(scale(_y,0,yHi,0,1000));
 		
+		_y = parseInt(scale(_y,0,yHi,0,1000));
+		if(isNaN(_y)) _y = 0;
+
 		var _z = parseInt(scale(zz[i],0,zHi,0,1000));
+		if(isNaN(_z)) _z = 0;
+		//writeConsole(_x+" _ "+_y+" _ "+_z);
 		gData[i-tmp]={x:_x, y:_y, z:_z};
 	}
 	g.drawGraph(gData);

@@ -12,19 +12,24 @@ Change the following lines in p2cool.js to skip ip input screen permanently
 //var li = get_cookie('LocalIP');
 var li = "yourp2pool:9332";
 
+Peers are displayed:	outgoing(incoming)
+Shares are displayed:	shared/stale
+
 Right-arrow key on the first page attempts to connect to the specified address. If you've put the address in the field before and your browser remembered the field down > right will connect. Protip: use the delete key on old/invalid auto-fill entries.
 
 Refresh time and 3d graph spinners work with middle mouse too.
 
-Console is cleared after 50 calls to writeConsole() to reduce memory leakage[if(cbfr>50)]. Other objects might also need their children cleared.
+Console is cleared after 200 calls to writeConsole() to reduce memory leakage[if(cbfr>200)]. Other objects might also need cleanup.
 
 Other:
 ==================================================================
 features in consideration:
-- show trends with red/green color intensity (partially working on the dashboard)
-	--compares local_stats.miner_hash_rates to an average of the last hour
 - tooltip graph for every stat
 
 
-generosity to:
+donations to p2pool miners:
+https://en.bitcoin.it/wiki/P2Pool#Donating_to_P2Pool_miners
+
+donations to p2cool(this ui only):
 1svyXNG1igPSWg4TieJp3M2RUqughKyvE
+

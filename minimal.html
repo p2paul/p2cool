@@ -44,56 +44,74 @@ javascript
 <div id="apDiv1">
   <form name="form1" action="#">
     <table border="0">
-      <tr>
-        <td>Local</td>
-        <td><div class="statline">
-            <input name="lcspd" type="text" class="shortbox" value="-" readonly />
-          </div></td>
-      </tr>
-      <tr>
-        <td>Pool</td>
-        <td><div class="statline">
-            <input name="plspd" type="text" class="medbox righttxt" value="---.--" readonly />
-          </div></td>
-      </tr>
-      <tr>
-        <td>Efficiency</td>
-        <td><div class="statline">
-            <input name="lcef" type="text" class="shortbox" value="---%" readonly />
-          </div></td>
-      </tr>
-      <tr>
-        <td>Shares</td>
-        <td><div class="statline">
-            <input name="lcsh" type="text" class="shortbox" value="-" readonly />
-          </div></td>
-      </tr>
-      <tr>
-        <td>Payout</td>
-        <td><div class="statline">
-            <input name="lcpo" type="text" class="shortbox" value="-" readonly />
-          </div></td>
-      </tr>
-      <tr>
-        <td>DOA</td>
-        <td><div class="statline">
-            <input name="lcdoa" type="text" class="shortbox" value="--" readonly />
-          </div></td>
-      </tr>
-      <tr>
-        <td>Pool Stale</td>
-        <td><div class="statline">
-            <input name="plsr" type="text" class="medbox righttxt" value="----" readonly />
-          </div></td>
-      </tr>
-      <tr>
-        <td>refresh</td>
-        <td><div id="refreshControl"></div></td>
-      </tr>
-      <tr>
-      	<td><a href="dashboard.html">dashboard</a></td>
-        <td><a href="javascript: void(0);" onclick="remIP();">reset</a></td>
-      </tr>
+		<tr>
+			<td>Local</td>
+			<td><div class="statline">
+			<input name="lcspd" type="text" class="shortbox" value="-" readonly />
+			</div></td>
+		</tr>
+		<tr>
+			<td>Pool</td>
+			<td><div class="statline">
+			<input name="plspd" type="text" class="medbox righttxt" value="---.--" readonly />
+			</div></td>
+		</tr>
+		<tr>
+			<td>Peers</td>
+			<td><div class="statline">
+			<input name="lcpr" type="text" class="medbox righttxt" value="-(-)" readonly />
+			</div></td>
+			</tr>
+		<tr>
+			<td>Shares</td>
+			<td><div class="statline">
+			<input name="lcsh" type="text" class="shortbox" value="-" readonly />
+			</div></td>
+		</tr>
+		<tr>
+			<td>Payout</td>
+			<td><div class="statline">
+			<input name="lcpo" type="text" class="shortbox" value="-" readonly />
+			</div></td>
+		</tr>
+		<tr>
+			<td>Efficiency</td>
+			<td><div class="statline">
+			<input name="lcef" type="text" class="shortbox" value="---%" readonly />
+			</div></td>
+		</tr>
+		<tr>
+			<td>DOA</td>
+			<td><div class="statline">
+			<input name="lcdoa" type="text" class="shortbox" value="--" readonly />
+			</div></td>
+		</tr>
+		<tr>
+			<td>Block Payout</td>
+			<td><div class="statline">
+			<input name="plpo" type="text" class="medbox righttxt" value="--.----" readonly />
+			</div></td>
+		</tr>
+		<tr>
+			<td>Pool Stale</td>
+			<td><div class="statline">
+			<input name="plsr" type="text" class="medbox righttxt" value="----" readonly />
+			</div></td>
+		</tr>
+		<tr>
+			<td>refresh</td>
+			<td><div id="refreshControl"></div></td>
+		</tr>
+		<tr>
+			<td><a href="dashboard.html">dashboard</a></td>
+			<td><a href="javascript: void(0);" onclick="remIP();">reset</a></td>
+		</tr>
+		<tr>
+			<td></td>
+			<td><div class="statline">
+			<input name="plsd" type="hidden" class="medbox righttxt" value="-.----" readonly />
+			</div></td>
+		</tr>
     </table>
   </form>
 </div>
