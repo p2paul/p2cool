@@ -179,6 +179,21 @@ form .medbox {
 	outline:none;
 }
 
+#picks{
+	position:absolute;
+	top:-36px;
+	height:36px;
+	left:90px;
+}
+#picks .pick {
+	height:36px;
+	width:32px;
+	margin-left:-20px;
+	background:url("../img/gold-pick.png");
+	display:block;
+	float:left;
+}
+
 .statline {
 	margin-bottom: 10px;
 }

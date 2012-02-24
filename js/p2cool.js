@@ -299,6 +299,7 @@ function storePayout(time){
 		}
 	}
 }
+var curPicks=0;
 function sortMinerData(){
 	//spot miner names
 	var mi = 0;
@@ -328,6 +329,24 @@ function sortMinerData(){
 			minerIsActive[v]=true;
 			activeMiners++;
 			topSpeed += getHigh(minarr[v]);
+		}
+	}
+	var pickBox = document.getElementById('picks');
+	if(thisPage=="dash"){
+		if(curPicks<activeMiners){
+			var u=activeMiners-curPicks
+			for(var w=0;w<u;w++){
+				var divTag = document.createElement("div");
+				divTag.className = 'pick';
+				pickBox.appendChild(divTag);
+				curPicks++;
+			}
+		}else if(curPicks>activeMiners){
+			var t=curPicks-activeMiners;
+			for(var s=0;s<t;s++){
+				pickBox.removeChild(pickBox.lastChild);
+				writeConsole("remd");
+			}
 		}
 	}
 }
