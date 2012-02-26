@@ -21,11 +21,9 @@ var thisPage="";
 
 var htxt="http://";
 
-var inputs = new Array(); //array to store stat elements
 
 var li = get_cookie('LocalIP');  //comment this
 //var li = "127.0.0.1:9332";  //change and uncomment this
-
 
 var onLoginScreen = true;
 var show3dGraph = 0;
@@ -58,8 +56,6 @@ function dashLoaded(){
 		getJSONdata();
 		loadGraphImages();
 		drawSpinControls();
-		inputs[0]=document.form1.lcspd;
-		inputs[1]=document.form1.lcpo;
 	}
 	var nwd = window.innerWidth;
 	var ndp = parseInt((nwd - 820) / 2)+"px";
@@ -79,10 +75,7 @@ function minLoaded(){
 		timeOutTimer=setTimeout("derpMe()",funcTimedOut);
 		document.getElementById('apDiv1').style.display = "block";
 		getJSONdata();
-		//loadGraphImages();
 		drawSpinControls('minimal');
-		inputs[0]=document.form1.lcspd;
-		inputs[1]=document.form1.lcpo;
 	}
 }
 
@@ -97,7 +90,6 @@ function derpMe(){
 }
 
 function checkInput(form){
-	//alert(form.p2poolip.value);
 	li = document.getElementById('IPIN').value;
 	document.getElementById('IPIN').value = "";
 	set_cookie('LocalIP', li, 365);
@@ -245,12 +237,14 @@ var lpoarr= new Array(); //peers.outgoing
 var lpiarr= new Array(); //peers.incoming
 var bvarr = new Array(); //block_value
 var asarr = new Array(); //attempts_to_share
+var abarr = new Array(); //attempts_to_block
 
-//incongruous
+//async
 var poarr = new Array(); //payout
 poarr[0] = new Array(); //timestamp
 poarr[1] = new Array(); //amount
 var pocur = 0;
+var csarr = new Array(); //current speeds
 
 var localspeed = 0; // current local speed
 var rf;
@@ -275,6 +269,8 @@ function clearVars(){
 	lpiarr= [];
 	bvarr = [];
 	asarr = [];
+	abarr = [];
+	csarr = [];
 	uniqueMinerNames = [];
 	minerIsActive = [];
 	activeMiners = 0;
@@ -314,7 +310,6 @@ function sortMinerData(){
 	}
 	for (var q=0;q<tmarr.length-1;q++){
 		for(var t=0;t<uniqueMinerNames.length;t++){
-		//writeConsole(q+" "+t+": "+mrarr[q][t]);
 			if(typeof mrarr[q][t] == 'undefined'){
 				minarr[t].push(0);
 			} else {
@@ -322,15 +317,18 @@ function sortMinerData(){
 			}
 		}
 	}
-	for(var v=0;v<uniqueMinerNames.length;v++){
-		if (minarr[v][minarr[v].length-1]==0){
-			minerIsActive[v]=false;
+
+	//determine active miners by /local_stats
+	for(var v=0;v<csarr.length;v++){
+		if (csarr[v]==0){
+			minerIsActive[v]=0;
 		}else{
-			minerIsActive[v]=true;
+			minerIsActive[v]=1;
 			activeMiners++;
 			topSpeed += getHigh(minarr[v]);
 		}
 	}
+
 	var pickBox = document.getElementById('picks');
 	if(thisPage=="dash"){
 		if(curPicks<activeMiners){
@@ -342,10 +340,13 @@ function sortMinerData(){
 				curPicks++;
 			}
 		}else if(curPicks>activeMiners){
-			var t=curPicks-activeMiners;
-			for(var s=0;s<t;s++){
-				pickBox.removeChild(pickBox.lastChild);
-				writeConsole("remd");
+			$('#picks').empty();
+			curPicks=0;
+			for(var w=0;w<activeMiners;w++){
+				var divTag = document.createElement("div");
+				divTag.className = 'pick';
+				pickBox.appendChild(divTag);
+				curPicks++;
 			}
 		}
 	}
@@ -369,7 +370,7 @@ function getJSONdata(){  //todo only rebuild arrays if data changes
 		fwarr[ind]=1;
 		if(thisPage=="dash"&&fwarr[0]==1&&fwarr[1]==1&&fwarr[2]==1&&fwarr[3]==1&&fwarr[4]==1){
 			sortMinerData();
-			colorStat(inputs[0],0,thisPage);
+			colorStat(document.form1.lcspd,0,thisPage);
 			var g3dchk = document.getElementById('graph3dcheck');
 			if(g3dchk != undefined){
 				if(show3dGraph == 1 ){
@@ -386,8 +387,8 @@ function getJSONdata(){  //todo only rebuild arrays if data changes
 			fwarr=[];
 		}else if(thisPage=="min"&&fwarr[0]==1&&fwarr[1]==1&&fwarr[2]==1&&fwarr[3]==1&&fwarr[4]==1){
 			sortMinerData();
-			colorStat(inputs[0],0,thisPage);
-			//colorStat(inputs[1],1,thisPage);
+			colorStat(document.form1.lcspd,0,thisPage);
+			//colorStat(document.form1.lcpo,1,thisPage);
 		}
 	}
 
@@ -404,7 +405,6 @@ function getJSONdata(){  //todo only rebuild arrays if data changes
 		m=checkTime(m);
 		s=checkTime(s);
 		$('#upTime').html('uptime:  '+d+'d  '+h+':'+m+':'+s);
-		//$("#console").append(" refreshed at: "+d+'d '+h+':'+m+':'+s+" \n");
 		funcWatch(0);
 	});
 	
@@ -416,6 +416,7 @@ function getJSONdata(){  //todo only rebuild arrays if data changes
 			for(var i in k.miner_hash_rates) {
 				localspeed = localspeed + k.miner_hash_rates[i];
 				var sp = Math.round(k.miner_hash_rates[i]/10000)/100
+				csarr.push(sp);
 				writeConsole(getCurrentTime()+" "+i+": "+sp+" MH/s");
 			}
 			document.form1.lcspd.value = roundNumber((localspeed/1000000),2);
@@ -449,7 +450,7 @@ function getJSONdata(){  //todo only rebuild arrays if data changes
 			var processor; // needs to be defined prior
 			processor = function(dataItem, idx) {
 
-				//todo put miners under consistent index ??
+				//todo put miners under consistent index
 				if (typeof dataItem === 'object') {
 					if (idx =="local_hash_rates"){
 						mnarr[it] = new Array();
@@ -499,6 +500,7 @@ function getJSONdata(){  //todo only rebuild arrays if data changes
 					if (idx=="time")			{ tmarr[it] = parseInt(dataItem) }
 					if (idx=="block_value")		{ bvarr[it] = dataItem }
 					if (idx=="attempts_to_share"){ asarr[it] = dataItem }
+					if (idx=="attempts_to_block"){ abarr[it] = dataItem }
             		return;
         		}
     		};
@@ -513,8 +515,9 @@ function getJSONdata(){  //todo only rebuild arrays if data changes
 			}
 			document.form1.lcsh.value = sharr[lai]+"/"+ssarr[lai];
 			document.form1.plpo.value = roundNumber(bvarr[lai],4);
-			//attempts_per_block/pool_hash_rate is time to block
-			document.form1.plsd.value = roundNumber(asarr[lai]/prarr[lai],4);
+			var plsdv = abarr[lai]/prarr[lai];
+			plsdv = Math.floor(plsdv/3600)+":"+checkTime(Math.round((plsdv%3600)/60));
+			document.form1.plsd.value = plsdv;
 			document.form1.plsr.value = roundNumber(psarr[lai]*100,2)+"%";
 			document.form1.lcpr.value = lpoarr[lai]+"("+lpiarr[lai]+")";
 			var ft2 = new Date().getTime();

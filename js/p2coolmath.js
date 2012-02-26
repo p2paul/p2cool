@@ -24,7 +24,7 @@ function getLow(arr){
 function scale(data,low,high,tlow,thigh){
 	return((data-low)/(high-low)*thigh);
 }
-//todo: check averaging
+
 function compArray(a,fac,notTime){
 	var b = new Array();
 	var c = new Array(0);
@@ -35,7 +35,6 @@ function compArray(a,fac,notTime){
 			c[i]=0;
 			for(var j=0;j<((i*fac));j++){
 				c[i] = a[(i*fac)+j]+c[i];
-				//$("#console").append(j+"\n");
 			}
 		}
 	}
@@ -45,7 +44,6 @@ function compArray(a,fac,notTime){
 	return b;
 	
 }
-//0 in first array entry?
 function avgArray(a){
 	var c = a.length;
 	var b = 0;
@@ -59,7 +57,14 @@ function avgArray(a){
 	}
 	b = b/c;
 	b=Math.round(b);
-	//$("#console").append(a+"\n "+b+"\n");
 	return b;
 }
 
+//decimal to hex
+function d2h(d) {
+	var hex = d.toString(16);
+	while (hex.length < 2) {
+        hex = "0" + hex;
+    }
+	return hex;
+}

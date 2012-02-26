@@ -35,11 +35,10 @@ function load3D(xx,yy,zz,names){
 		_y = parseInt(scale(_y,0,yHi,0,1000));
 		if(isNaN(_y)) _y = 0;
 
-		var _z = parseInt(scale(zz[i],0,zHi,0,1000));
+		var _z = parseInt(scale(zz[i],zLo,zHi,0,1000));
 		if(isNaN(_z)) _z = 0;
 		//writeConsole(_x+" _ "+_y+" _ "+_z);
 		gData[i-tmp]={x:_x, y:_y, z:_z};
 	}
 	g.drawGraph(gData);
-	//printArray(minarr);
 }
