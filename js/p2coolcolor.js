@@ -17,7 +17,6 @@ function getStatAvg(arr,deep){
 }
 
 function colorStat(elm,inp,thisPage){
-	//writeConsole(mrarr);
 	var cur = 0;
 	var avg = 0;
 	var rng = 0;

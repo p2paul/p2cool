@@ -1,9 +1,15 @@
+Usage:
+==================================================================
+1. unzip or clone to any directory
+2. open dashboard.html (or minimal)
+3. type in the address of your p2pool server
+4. hit enter
+
 Browser Compatibility:
 ==================================================================
 Firefox -- working
 Chrome  -- working (no cookies, see below notes)
 Opera   -- zoom property in jquery causing failure
-IE      -- not tested
 
 Notes:
 ==================================================================
@@ -29,15 +35,7 @@ jQuery:
 -currently the full version 1.7.1 is being used locally on the dashboard
 -the online google version and minimal version are commented in dashboard.html, feel free to switch
 
-Other:
+
 ==================================================================
-features in consideration:
-- tooltip graph for every stat
-
-
 donations to p2pool miners:
 https://en.bitcoin.it/wiki/P2Pool#Donating_to_P2Pool_miners
-
-donations to p2cool(this ui only):
-1svyXNG1igPSWg4TieJp3M2RUqughKyvE
-
