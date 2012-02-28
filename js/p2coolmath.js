@@ -25,20 +25,20 @@ function scale(data,low,high,tlow,thigh){
 	return((data-low)/(high-low)*thigh);
 }
 
-function compArray(a,fac,notTime){
+function compArray(a,fac,avgMe){
 	var b = new Array();
 	var c = new Array(0);
 	nLen = Math.floor(a.length/fac);
 	for(var i=0;i<=nLen;i++){
 		b[i]=a[i*fac];
-		if(notTime){
+		if(avgMe){
 			c[i]=0;
 			for(var j=0;j<((i*fac));j++){
 				c[i] = a[(i*fac)+j]+c[i];
 			}
 		}
 	}
-	if(notTime){
+	if(avgMe){
 		b[i] = avgArray(c);
 	}
 	return b;

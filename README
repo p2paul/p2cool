@@ -17,9 +17,17 @@ Shares are displayed:	shared/stale
 
 Right-arrow key on the first page attempts to connect to the specified address. If you've put the address in the field before and your browser remembered the field down > right will connect. Protip: use the delete key on old/invalid auto-fill entries.
 
+On the 3d Graph:
+-each point of speed is an average of n number of records. n is set with the spinner
+-no Z "flattens" to time/speed.
+
 Refresh time and 3d graph spinners work with middle mouse too.
 
 Console is cleared after 200 calls to writeConsole() to reduce memory leakage[if(cbfr>200)]. Other objects might also need cleanup.
+
+jQuery:
+-currently the full version 1.7.1 is being used locally on the dashboard
+-the online google version and minimal version are commented in dashboard.html, feel free to switch
 
 Other:
 ==================================================================

@@ -19,7 +19,7 @@ function drawSpinControls(which){
 		graphCompCtrl.SetCurrentValue(graphComp);
 		graphCompCtrl.SetMaxValue(32);
 		graphCompCtrl.SetMinValue(1);
-		document.getElementById('controls').appendChild(graphCompCtrl.GetContainer());
+		document.getElementById('spinctrl3d').appendChild(graphCompCtrl.GetContainer());
 		graphCompCtrl.StartListening();
 		graphCompCtrl.AttachValueChangedListener(reload3dGraph);
 	}

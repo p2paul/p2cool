@@ -227,9 +227,16 @@ form .medbox {
 
 #g-holder #controls{
 	display:none;
+	position:relative;
+	top:252px;
+	right:-103px;
+	height:23px;
+	width:133px;
+}
+#g-holder #controls #spinctrl3d{
 	position:absolute;
-	top:250px;
-	left:184px;
+	top:0px;
+	left:80px;
 }
   
 #canvasDiv{
